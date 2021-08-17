@@ -66,11 +66,12 @@ if __name__ == "__main__":
     check = args["check"]
 
     gl = connect(gitlab_url, gitlab_token)
-
+ 
     if check == 'project':
         if project_id == "all": 
             project_output = check_all_projects(gl)
         else:
+            project_output = check_project(gl, project_id)
             try:
                 int(project_id)
                 project_output = check_project(gl, project_id)
