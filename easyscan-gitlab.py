@@ -30,17 +30,17 @@ def connect(gitlab_url, gitlab_token):
 
 
 def check_project(gl, project_id):
-    dict = {project_id: [
-            get_project_info(gl, project_id),
-            check_project_visbility(gl, project_id),
-            check_project_pages_access_level(gl, project_id),
-            check_project_security_and_compliance_enabled(gl, project_id),
-            check_project_approvals_before_merge(gl, project_id),
-            check_project_push_rules_unsigned_commits(gl, project_id),
-            check_project_push_rules_comitter_check(gl, project_id)
-        ]
-    }
-    return dict
+    dict = {}
+    dict.update(get_project_info(gl, project_id))
+    dict.update(check_project_visbility(gl, project_id))
+    dict.update(check_project_pages_access_level(gl, project_id))
+    dict.update(check_project_security_and_compliance_enabled(gl, project_id))
+    dict.update(check_project_approvals_before_merge(gl, project_id))
+    dict.update(check_project_push_rules_unsigned_commits(gl, project_id))
+    dict.update(check_project_push_rules_comitter_check(gl, project_id))
+    dict.update(get_project_all_keys(gl, project_id))
+    project_dict = {project_id: dict}
+    return project_dict
 
 def check_all_projects(gl):
     dict = {}
@@ -69,15 +69,15 @@ if __name__ == "__main__":
 
     if check == 'project':
         if project_id == "all": 
-            output = check_all_projects(gl)
-            projects_dict_output = {'projects': output}
+            project_output = check_all_projects(gl)
         else:
             try:
                 int(project_id)
-                output = check_project(gl, project_id)
-                projects_dict_output = {'projects': output}
+                project_output = check_project(gl, project_id)
             except:
                 print ("Project Select error")
+                project_output = ""
+        projects_dict_output = {'projects': project_output}
     
     scan = {'easyscan-gitlab': projects_dict_output}
     print (scan)

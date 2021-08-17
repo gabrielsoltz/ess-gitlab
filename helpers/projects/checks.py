@@ -50,3 +50,32 @@ def get_project_info(gl, project_id):
     except exceptions.GitlabGetError:
         return {'project_info': '403 Forbidden'}
     return {'project_info': {'name': attributes['name'], 'name_with_namespace': attributes['name_with_namespace'], 'description': attributes['description'], 'web_url': attributes['web_url']}}
+
+def get_project_all_keys(gl, project_id):
+    keys = {}
+    try:
+        access_tokens = get_project_access_tokens(gl, project_id)
+        keys.update({'get_project_access_tokens': access_tokens})
+    except exceptions.GitlabGetError:
+        keys.update({'get_project_access_tokens': '403 Forbidden'})
+    except exceptions.GitlabAuthenticationError:
+        keys.update({'get_project_access_tokens': '401 Unauthorized'})
+    try:
+        deployment_tokens = get_project_deployment_tokens(gl, project_id)
+        keys.update({'get_project_deployment_tokens': deployment_tokens})
+    except exceptions.GitlabGetError:
+        keys.update({'get_project_deployment_tokens': '403 Forbidden'})
+    except exceptions.GitlabAuthenticationError:
+        keys.update({'get_project_deployment_tokens': '401 Unauthorized'})
+    except exceptions.GitlabListError:
+        keys.update({'get_project_deployment_tokens': '403 Forbidden'})
+    try:
+        project_keys = get_project_keys(gl, project_id)
+        keys.update({'get_project_keys': project_keys})
+    except exceptions.GitlabGetError:
+        keys.update({'get_project_keys': '403 Forbidden'})
+    except exceptions.GitlabAuthenticationError:
+        keys.update({'get_project_keys': '401 Unauthorized'})
+    except exceptions.GitlabListError:
+        keys.update({'get_project_keys': '403 Forbidden'})
+    return {'keys': keys}
