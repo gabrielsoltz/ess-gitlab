@@ -6,15 +6,13 @@ Easy Scanning for Gitlab Miss-Configurations
 
 ## Scan a specific project
 
-`./easyscan-gitlab.py --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken \
---check project --project_id project_id_number`
+`./easyscan-gitlab.py --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --check project --project_id project_id_number`
 
-## Scan all projects
+## Scan all projects (hardcoded amount of projects: 10)
 
-`./easyscan-gitlab.py --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken \
---check project --project_id all`
+`./easyscan-gitlab.py --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --check project --project_id all`
 
-## Projects Checks
+## Project Checks
 
 ### Project Visibility
 
@@ -42,3 +40,17 @@ https://docs.gitlab.com/ee/push_rules/push_rules.html
 ### Push Rules: Comitter Check
 
 https://docs.gitlab.com/ee/push_rules/push_rules.html
+
+### Project Keys
+
+#### Project Access Tokens
+
+https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html
+
+#### Project Deployment Tokens
+
+https://docs.gitlab.com/ee/user/project/deploy_tokens/
+
+#### Project Keys
+
+https://docs.gitlab.com/ee/user/project/deploy_keys/
