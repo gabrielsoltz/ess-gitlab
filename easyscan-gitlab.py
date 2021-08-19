@@ -38,6 +38,7 @@ def check_project(gl, project_id):
     dict.update(check_project_approvals_before_merge(gl, project_id))
     dict.update(check_project_push_rules_unsigned_commits(gl, project_id))
     dict.update(check_project_push_rules_comitter_check(gl, project_id))
+    dict.update(check_project_protected_branches(gl, project_id))
     dict.update(get_project_all_keys(gl, project_id))
     project_dict = {project_id: dict}
     return project_dict

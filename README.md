@@ -41,6 +41,10 @@ https://docs.gitlab.com/ee/push_rules/push_rules.html
 
 https://docs.gitlab.com/ee/push_rules/push_rules.html
 
+### Protected Branches
+
+https://docs.gitlab.com/ee/user/project/protected_branches.html
+
 ### Project Keys
 
 #### Project Access Tokens

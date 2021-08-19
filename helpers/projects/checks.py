@@ -1,6 +1,15 @@
 from gitlab import exceptions
 from helpers.projects.methods import *
 
+def get_project_info(gl, project_id):
+    try:
+        attributes = get_project_attributes(gl, project_id)
+        project_languages = get_project_languages(gl, project_id)
+        project_contributors = get_project_contributors(gl, project_id)
+    except exceptions.GitlabGetError:
+        return {'project_info': '403 Forbidden'}
+    return {'project_info': {'name': attributes['name'], 'name_with_namespace': attributes['name_with_namespace'], 'description': attributes['description'], 'web_url': attributes['web_url'], 'project_languages': project_languages, 'project_contributors': project_contributors}}
+
 def check_project_visbility(gl, project_id):
     try:
         attributes = get_project_attributes(gl, project_id)
@@ -44,23 +53,17 @@ def check_project_push_rules_comitter_check(gl, project_id):
         return {'project_push_rules_comitter_check': '403 Forbidden'}
     return {'project_push_rules_comitter_check': push_rules.commit_committer_check}
 
-def check_project_push_rules_comitter_check(gl, project_id):
+def check_project_protected_branches(gl, project_id):
     try:
         protected_branches = get_protectedbranches(gl, project_id)
     except exceptions.GitlabGetError:
         return {'project_protected_branches': '403 Forbidden'}
     for i in protected_branches:
         protected_branches = i
-    return {'project_protected_branches': protected_branches._attrs}
-
-def get_project_info(gl, project_id):
     try:
-        attributes = get_project_attributes(gl, project_id)
-        project_languages = get_project_languages(gl, project_id)
-        project_contributors = get_project_contributors(gl, project_id)
-    except exceptions.GitlabGetError:
-        return {'project_info': '403 Forbidden'}
-    return {'project_info': {'name': attributes['name'], 'name_with_namespace': attributes['name_with_namespace'], 'description': attributes['description'], 'web_url': attributes['web_url'], 'project_languages': project_languages, 'project_contributors': project_contributors}}
+        return {'project_protected_branches': protected_branches._attrs}
+    except:
+        return {'project_protected_branches': protected_branches}
 
 def get_project_all_keys(gl, project_id):
     project_all_keys = {}
