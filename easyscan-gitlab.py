@@ -2,6 +2,7 @@
 
 import gitlab
 import argparse
+import json
 from helpers.projects.checks import *
 
 def connect(gitlab_url, gitlab_token):
@@ -82,5 +83,6 @@ if __name__ == "__main__":
         projects_dict_output = {'projects': project_output}
     
     scan = {'easyscan-gitlab': projects_dict_output}
-    print (scan)
+    
+    print(json.dumps(scan, indent=4, sort_keys=True))
             
