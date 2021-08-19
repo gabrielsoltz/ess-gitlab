@@ -1,5 +1,7 @@
 # EasyScan Gitlab
 
+! THIS IS A WORK IN PROGRESS
+
 Easy Scanning for Gitlab Miss-Configurations
 
 ## How to use it
