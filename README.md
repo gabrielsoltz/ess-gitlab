@@ -60,3 +60,19 @@ https://docs.gitlab.com/ee/user/project/deploy_tokens/
 #### Project Keys
 
 https://docs.gitlab.com/ee/user/project/deploy_keys/
+
+### Project Pipeline file
+
+`.gitlab-ci.yml`
+
+#### Project Pipeline check Blocks (`stages`)
+
+Show all stages from the pipeline
+
+#### Project Pipeline check Images in all blocks (`image`)
+
+Show all images being used in all stages of the pipeline
+
+### Project CODEOWNERS file
+
+Check if file CODEOWNERS is present

@@ -1,6 +1,7 @@
 from gitlab import exceptions
 from helpers.projects.methods import *
 
+
 def get_project_info(gl, project_id):
     try:
         attributes = get_project_attributes(gl, project_id)
@@ -108,3 +109,39 @@ def get_project_all_keys(gl, project_id):
     except exceptions.GitlabListError:
         project_all_keys.update({'project_keys': '403 Forbidden'})
     return {'project_all_keys': project_all_keys}
+
+def check_project_pipeline(gl, project_id):
+    try:
+        pipeline_file = get_project_file(gl, project_id, '.gitlab-ci.yml')
+        project_pipeline = {}
+    except exceptions.GitlabGetError:
+        return {'project_pipeline': 'Pipeline Not Found'}
+    project_pipeline.update(check_project_pipeline_block(pipeline_file, 'stages'))
+    project_pipeline.update(check_project_pipeline_images(pipeline_file))
+    return {'project_pipeline': project_pipeline}
+
+def check_project_pipeline_block(pipeline_file, block):
+    try: 
+        pipeline_block = yaml.safe_load(pipeline_file)[block]
+        return {'project_pipeline_' + block: pipeline_block}
+    except KeyError:
+        return {'project_pipeline_' + block: 'Block Not Found'}
+
+def check_project_pipeline_images(pipeline_file):
+    pipeline_yaml = yaml.safe_load(pipeline_file)
+    project_pipeline_images = {'project_pipeline_images': []}
+    for i in pipeline_yaml:
+        if 'image' in i:
+            project_pipeline_images['project_pipeline_images'].append(pipeline_yaml[i])
+        if 'image' in pipeline_yaml[i]:
+            project_pipeline_images['project_pipeline_images'].append(pipeline_yaml[i]['image'])
+    return project_pipeline_images
+
+def check_project_codeowners(gl, project_id):
+    try:
+        codeowners_file = get_project_file(gl, project_id, 'CODEOWNERS')
+        return {'project_codeowners': codeowners_file}
+    except exceptions.GitlabGetError:
+        return {'project_codeowners': 'CODEOWNERS Not Found'}
+    
+    

@@ -1,3 +1,5 @@
+import yaml
+
 def get_protectedbranches(gl, project_id):
     project = gl.projects.get(project_id)
     return project.protectedbranches.list()
@@ -34,3 +36,8 @@ def get_all_projects(gl):
     #projects = gl.projects.list(all=True)
     projects = gl.groups.list(page=1, per_page=10)
     return projects
+
+def get_project_file(gl, project_id, file):
+    project = gl.projects.get(project_id)
+    f = project.files.raw(file_path=file, ref='master')
+    return f.decode()

@@ -3,6 +3,7 @@
 import gitlab
 import argparse
 import json
+import pprint
 from helpers.projects.checks import *
 
 def connect(gitlab_url, gitlab_token):
@@ -41,6 +42,8 @@ def check_project(gl, project_id):
     dict.update(check_project_push_rules_comitter_check(gl, project_id))
     dict.update(check_project_protected_branches(gl, project_id))
     dict.update(get_project_all_keys(gl, project_id))
+    dict.update(check_project_pipeline(gl, project_id))
+    dict.update(check_project_codeowners(gl, project_id))
     project_dict = {project_id: dict}
     return project_dict
 
