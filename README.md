@@ -2,7 +2,7 @@
 
 ! THIS IS A WORK IN PROGRESS
 
-Easy Scanning for Gitlab Miss-Configurations
+Easy Scanning for Gitlab Mis-Configurations
 
 ## How to use it
 
