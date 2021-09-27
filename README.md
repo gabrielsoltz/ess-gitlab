@@ -6,8 +6,8 @@ Easy Scanning for Gitlab Mis-Configurations
 
 This tool can run in 2 different modes (`--mode`):
 
-- Inventory: It will fetch all the information for a specific scope (`check` + `project_id`).
-- Baseline: It will fetch all the information for a specific scope (`check` + `project_id`) and compare with the baseline definition for that scope for generating a miss-configuration report
+- Inventory: It will fetch all the information for a specific scope (`check` + `id`).
+- Baseline: It will fetch all the information for a specific scope (`check` + `id`) and compare with the baseline definition for that scope for generating a miss-configuration report
 
 ## How to use it
 
