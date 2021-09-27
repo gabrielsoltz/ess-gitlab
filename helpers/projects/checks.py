@@ -1,5 +1,7 @@
+import yaml
+
 from gitlab import exceptions
-from helpers.projects.methods import *
+from helpers.projects.service import *
 
 
 def get_project_info(gl, project_id):
@@ -11,12 +13,12 @@ def get_project_info(gl, project_id):
         return {'project_info': '403 Forbidden'}
     return {'project_info': {'name': attributes['name'], 'name_with_namespace': attributes['name_with_namespace'], 'description': attributes['description'], 'web_url': attributes['web_url'], 'project_languages': project_languages, 'project_contributors': project_contributors}}
 
-def check_project_visbility(gl, project_id):
+def check_project_visibility(gl, project_id):
     try:
         attributes = get_project_attributes(gl, project_id)
     except exceptions.GitlabGetError:
-        return {'project_visbility': '403 Forbidden'}
-    return {'project_visbility': attributes['visibility']}
+        return {'project_visibility': '403 Forbidden'}
+    return {'project_visibility': attributes['visibility']}
 
 def check_project_pages_access_level(gl, project_id):
     try:
@@ -36,8 +38,8 @@ def check_project_approvals_before_merge(gl, project_id):
     try:
         attributes = get_project_attributes(gl, project_id)
     except exceptions.GitlabGetError:
-        return {'roject_approvals_before_merge': '403 Forbidden'}
-    return {'roject_approvals_before_merge': attributes['approvals_before_merge']}
+        return {'project_approvals_before_merge': '403 Forbidden'}
+    return {'project_approvals_before_merge': attributes['approvals_before_merge']}
 
 def check_project_push_rules_unsigned_commits(gl, project_id):
     try:
@@ -58,6 +60,8 @@ def check_project_protected_branches(gl, project_id):
     try:
         protected_branches = get_protectedbranches(gl, project_id)
     except exceptions.GitlabGetError:
+        return {'project_protected_branches': '403 Forbidden'}
+    except exceptions.GitlabListError:
         return {'project_protected_branches': '403 Forbidden'}
     for i in protected_branches:
         protected_branches = i
