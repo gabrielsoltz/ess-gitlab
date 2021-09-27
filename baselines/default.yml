@@ -1,0 +1,13 @@
+# None: disable check
+
+projects:
+  - 'project_id':
+    - project_visibility: 'internal'
+    - project_pages_access_level: 'public'
+    - project_security_and_compliance_enabled:
+    - project_approvals_before_merge: 
+    - project_push_rules_unsigned_commits: 
+    - project_push_rules_comitter_check: 
+    - project_protected_branches: 
+    - project_pipeline: 
+    - project_codeowners: 
