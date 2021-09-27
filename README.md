@@ -4,17 +4,40 @@
 
 Easy Scanning for Gitlab Mis-Configurations
 
+This tool can run in 2 different modes (`--mode`):
+
+- Inventory: It will fetch all the information for a specific scope (`check` + `project_id`).
+- Baseline: It will fetch all the information for a specific scope (`check` + `project_id`) and compare with the baseline definition for that scope for generating a miss-configuration report
+
 ## How to use it
 
-## Scan a specific project
+### Inventory Mode
 
-`./easyscan-gitlab.py --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --check project --project_id project_id_number`
+You can define `--id` as a project id, a group id for getting all project ids under that group or all for getting all project ids.
 
-## Scan all projects (hardcoded amount of projects: 10)
+`./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
-`./easyscan-gitlab.py --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --check project --project_id all`
+### Baseline for a specific project
 
-## Project Checks
+`./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
+
+## Checks: Project
+
+- Project Visibility
+- Pages Access Level
+- Security and Compliance
+- Approvals before Merge
+- Push Rules: Unsigned Commits
+- Push Rules: Comitter Check
+- Protected Branches
+- Project Access Tokens
+- Project Deployment Tokens
+- Project Keys
+- Project Pipeline: file
+- Project Pipeline: check Blocks
+- Project Pipeline: check Images in all blocks
+- Project CODEOWNERS file
+
 
 ### Project Visibility
 
@@ -47,23 +70,21 @@ https://docs.gitlab.com/ee/push_rules/push_rules.html
 
 https://docs.gitlab.com/ee/user/project/protected_branches.html
 
-### Project Keys
-
-#### Project Access Tokens
+### Project Access Tokens
 
 https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html
 
-#### Project Deployment Tokens
+### Project Deployment Tokens
 
 https://docs.gitlab.com/ee/user/project/deploy_tokens/
 
-#### Project Keys
+### Project Keys
 
 https://docs.gitlab.com/ee/user/project/deploy_keys/
 
 ### Project Pipeline file
 
-`.gitlab-ci.yml`
+Check if file `.gitlab-ci.yml` exists.
 
 #### Project Pipeline check Blocks (`stages`)
 
@@ -75,4 +96,4 @@ Show all images being used in all stages of the pipeline
 
 ### Project CODEOWNERS file
 
-Check if file CODEOWNERS is present
+Check if file CODEOWNERS exists.
