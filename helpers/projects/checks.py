@@ -1,5 +1,3 @@
-import yaml
-
 from gitlab import exceptions
 from helpers.projects.service import *
 
@@ -70,82 +68,81 @@ def check_project_protected_branches(gl, project_id):
     except:
         return {'project_protected_branches': protected_branches}
 
-def get_project_all_keys(gl, project_id):
-    project_all_keys = {}
+def check_project_access_tokens(gl, project_id):
     try:
         access_tokens = get_project_access_tokens(gl, project_id)
         for i in access_tokens:
             access_tokens = i
         try:
-            project_all_keys.update({'project_access_tokens': access_tokens._attrs})
+            return {'project_access_tokens': access_tokens._attrs}
         except:
-            project_all_keys.update({'project_access_tokens': access_tokens})
+            return {'project_access_tokens': access_tokens}
     except exceptions.GitlabGetError:
-        project_all_keys.update({'project_access_tokens': '403 Forbidden'})
+        return {'project_access_tokens': '403 Forbidden'}
     except exceptions.GitlabAuthenticationError:
-        project_all_keys.update({'project_access_tokens': '401 Unauthorized'})
+        return {'project_access_tokens': '401 Unauthorized'}
+
+
+def check_project_deployment_tokens(gl, project_id):
     try:
         deployment_tokens = get_project_deployment_tokens(gl, project_id)
         for i in deployment_tokens:
             deployment_tokens = i
         try:
-            project_all_keys.update({'project_deployment_tokens': deployment_tokens._attrs})
+            return {'project_deployment_tokens': deployment_tokens._attrs}
         except:
-            project_all_keys.update({'project_deployment_tokens': deployment_tokens})
+            return {'project_deployment_tokens': deployment_tokens}
     except exceptions.GitlabGetError:
-        project_all_keys.update({'project_deployment_tokens': '403 Forbidden'})
+        return {'project_deployment_tokens': '403 Forbidden'}
     except exceptions.GitlabAuthenticationError:
-        project_all_keys.update({'project_deployment_tokens': '401 Unauthorized'})
+        return {'project_deployment_tokens': '401 Unauthorized'}
     except exceptions.GitlabListError:
-        project_all_keys.update({'project_deployment_tokens': '403 Forbidden'})
+        return {'project_deployment_tokens': '403 Forbidden'}
+
+def check_project_keys(gl, project_id):
     try:
         project_keys = get_project_keys(gl, project_id)
         for i in project_keys:
             project_keys = i
         try:
-            project_all_keys.update({'project_keys': project_keys._attrs})
+            return {'project_keys': project_keys._attrs}
         except:
-            project_all_keys.update({'project_keys': project_keys})
+            return {'project_keys': project_keys}
     except exceptions.GitlabGetError:
-        project_all_keys.update({'project_keys': '403 Forbidden'})
+        return {'project_keys': '403 Forbidden'}
     except exceptions.GitlabAuthenticationError:
-        project_all_keys.update({'project_keys': '401 Unauthorized'})
+        return {'project_keys': '401 Unauthorized'}
     except exceptions.GitlabListError:
-        project_all_keys.update({'project_keys': '403 Forbidden'})
-    return {'project_all_keys': project_all_keys}
+        return {'project_keys': '403 Forbidden'}
 
 def check_project_pipeline(gl, project_id):
     try:
         pipeline_file = get_project_file(gl, project_id, '.gitlab-ci.yml')
-        project_pipeline = {}
     except exceptions.GitlabGetError:
-        return {'project_pipeline': 'Pipeline Not Found'}
-    project_pipeline.update(check_project_pipeline_block(pipeline_file, 'stages'))
-    project_pipeline.update(check_project_pipeline_images(pipeline_file))
-    return {'project_pipeline': project_pipeline}
+        return {'project_pipeline': False}
+    return {'project_pipeline': True}
 
-def check_project_pipeline_block(pipeline_file, block):
-    try: 
-        pipeline_block = yaml.safe_load(pipeline_file)[block]
-        return {'project_pipeline_' + block: pipeline_block}
-    except KeyError:
-        return {'project_pipeline_' + block: 'Block Not Found'}
+def check_project_pipeline_stages(gl, project_id):
+    try:
+        pipeline_file = get_project_file(gl, project_id, '.gitlab-ci.yml')
+    except exceptions.GitlabGetError:
+        return {'project_pipeline_stages': False}
+    pipeline_block_stages = get_project_pipeline_block(pipeline_file, 'stages')
+    return pipeline_block_stages
 
-def check_project_pipeline_images(pipeline_file):
-    pipeline_yaml = yaml.safe_load(pipeline_file)
-    project_pipeline_images = {'project_pipeline_images': []}
-    for i in pipeline_yaml:
-        if 'image' in i:
-            project_pipeline_images['project_pipeline_images'].append(pipeline_yaml[i])
-        if 'image' in pipeline_yaml[i]:
-            project_pipeline_images['project_pipeline_images'].append(pipeline_yaml[i]['image'])
-    return project_pipeline_images
+def check_project_pipeline_images(gl, project_id):
+    try:
+        pipeline_file = get_project_file(gl, project_id, '.gitlab-ci.yml')
+    except exceptions.GitlabGetError:
+        return {'project_pipeline_image': False}
+    pipeline_block_images = get_project_pipeline_content_of_block(pipeline_file, 'image')
+    return pipeline_block_images
 
 def check_project_codeowners(gl, project_id):
     try:
         codeowners_file = get_project_file(gl, project_id, 'CODEOWNERS')
         return {'project_codeowners': codeowners_file}
     except exceptions.GitlabGetError:
-        return {'project_codeowners': 'CODEOWNERS Not Found'}
+        return {'project_codeowners': False}
     
     

@@ -39,8 +39,12 @@ def check_project(gl, project_id):
     dict.update(check_project_push_rules_unsigned_commits(gl, project_id))
     dict.update(check_project_push_rules_comitter_check(gl, project_id))
     dict.update(check_project_protected_branches(gl, project_id))
-    dict.update(get_project_all_keys(gl, project_id))
+    dict.update(check_project_access_tokens(gl, project_id))
+    dict.update(check_project_deployment_tokens(gl, project_id))
+    dict.update(check_project_keys(gl, project_id))
     dict.update(check_project_pipeline(gl, project_id))
+    dict.update(check_project_pipeline_stages(gl, project_id))
+    dict.update(check_project_pipeline_images(gl, project_id))
     dict.update(check_project_codeowners(gl, project_id))
     project_dict = {project_id: dict}
     return project_dict
@@ -53,23 +57,36 @@ def check_baseline(baseline_file, scan):
         except yaml.YAMLError as exc:
             print(exc)
         for category, ids in baseline_yaml.items():
-            baseline_id_output = {}
+            baseline_check_output_by_id = {}
+            baseline_check_output = {}
             for id_dict in ids:
                 for id, values in id_dict.items():
-                    baseline_check_output = {}
                     for value in values:
                         for check, expected in value.items():
-                            print('Expected for ', check, 'is', expected)
-                            if expected:
-                                result = scan['easyscan-gitlab'][category][str(id)][check]
-                                if expected == result:
-                                    baseline_check_output.update({check: 'PASS'})
-                                    print ('TRUE')
-                                else:
-                                    baseline_check_output.update({check: 'FAIL'})
-                                    print('FALSE')
-            baseline_id_output.update({id: baseline_check_output})
-        baseline_output.update({category: baseline_id_output})
+                            if str(id) == '*':
+                                for scans_id in scan['easyscan-gitlab'][category]:
+                                    #print('* Expected for project id', scans_id , 'check', check, 'is', expected, '(Found: ', scan['easyscan-gitlab'][category][scans_id][check], ')')
+                                    if expected:
+                                        result = scan['easyscan-gitlab'][category][scans_id][check]
+                                        if expected == result:
+                                            baseline_check_output.update({check: 'PASS'})
+                                            #print ('TRUE')
+                                        else:
+                                            baseline_check_output.update({check: 'FAIL'})
+                                            #print('FALSE')
+                                        baseline_check_output_by_id.update({scans_id: baseline_check_output})
+                            elif str(id) in scan['easyscan-gitlab'][category]:
+                                #print('Expected for project id', id , 'check', check, 'is', expected, '(Found: ', scan['easyscan-gitlab'][category][id][check], ')')
+                                if expected:
+                                    result = scan['easyscan-gitlab'][category][str(id)][check]
+                                    if expected == result:
+                                        baseline_check_output.update({check: 'PASS'})
+                                        #print ('TRUE')
+                                    else:
+                                        baseline_check_output.update({check: 'FAIL'})
+                                        #print('FALSE')
+                                    baseline_check_output_by_id.update({id: baseline_check_output})
+        baseline_output.update({category: baseline_check_output_by_id})
     return baseline_output
 
 if __name__ == "__main__":
@@ -99,8 +116,8 @@ if __name__ == "__main__":
             dict_project = check_project(gl, project)
             project_output.update(dict_project)
         projects_dict_output = {'projects': project_output}
-
-    scan = {'easyscan-gitlab': projects_dict_output}
+        scan = {'easyscan-gitlab': projects_dict_output}
+        
     if mode == 'baseline':
         baseline_output = {'baseline': check_baseline('baselines/default.yml', scan)}
         output = {'easyscan-gitlab': baseline_output}

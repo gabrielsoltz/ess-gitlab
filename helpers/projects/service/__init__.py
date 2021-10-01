@@ -1,3 +1,5 @@
+import yaml
+
 def get_protectedbranches(gl, project_id):
     project = gl.projects.get(project_id)
     return project.protectedbranches.list()
@@ -67,3 +69,20 @@ def get_project_file(gl, project_id, file):
     project = gl.projects.get(project_id)
     f = project.files.raw(file_path=file, ref='master')
     return f.decode()
+
+def get_project_pipeline_block(pipeline_file, block):
+    try: 
+        pipeline_block = yaml.safe_load(pipeline_file)[block]
+        return {'project_pipeline_' + block: pipeline_block}
+    except KeyError:
+        return {'project_pipeline_' + block: 'Block Not Found'}
+
+def get_project_pipeline_content_of_block(pipeline_file, block):
+    pipeline_yaml = yaml.safe_load(pipeline_file)
+    project_pipeline_images = {'project_pipeline_' + block: []}
+    for i in pipeline_yaml:
+        if str(i).strip().lower() == block:
+            project_pipeline_images['project_pipeline_' + block].append(pipeline_yaml[i])
+        if str(pipeline_yaml[i]).strip().lower() == block:
+            project_pipeline_images['project_pipeline_' + block].append(pipeline_yaml[i][block])
+    return project_pipeline_images
