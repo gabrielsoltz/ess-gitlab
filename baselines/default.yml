@@ -1,18 +1,19 @@
 # None: disable check
-# Str: Match 1 value
+# Str: Match 1<>1 value
+# List: At least 1 of the value in the baseline must be in the output
 
 projects:
   - '*':
-    - project_visibility: 'public'
+    - project_visibility:
     - project_pages_access_level:
     - project_security_and_compliance_enabled:
     - project_approvals_before_merge: 
     - project_push_rules_unsigned_commits: 
     - project_push_rules_comitter_check: 
     - project_protected_branches: 
-    - project_access_tokens:
-    - project_deployment_tokens:
-    - project_keys:
+    - project_access_tokens: []
+    - project_deployment_tokens: []
+    - project_keys: []
     - project_pipeline: 
     - project_pipeline_stages: []
     - project_pipeline_image: []
