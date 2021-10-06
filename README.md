@@ -11,15 +11,120 @@ This tool can run in 2 different modes (`--mode`):
 
 ## How to use it
 
-### Inventory Mode
-
 You can define `--id` as a project id, a group id for getting all project ids under that group or all for getting all project ids.
+
+### Inventory Mode
 
 `./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
 ### Baseline for a specific project
 
 `./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
+
+## Baselines Use Cases
+
+### Check if Push Rules: Unsigned Commits and Push Rules: Comitter Check are enabled for all projects (`*`)
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_visibility:
+    - project_pages_access_level:
+    - project_security_and_compliance_enabled:
+    - project_approvals_before_merge: 
+    - project_push_rules_unsigned_commits: true
+    - project_push_rules_comitter_check: true
+    - project_protected_branches: 
+    - project_access_tokens:
+    - project_deployment_tokens:
+    - project_keys:
+    - project_pipeline: 
+    - project_pipeline_stages: []
+    - project_pipeline_image: []
+    - project_codeowners: 
+```
+
+### Check if Project Visibility is `internal` for project `1234` and `public` for project `4321`
+
+Baseline:
+```
+projects:
+  - '1234':
+    - project_visibility: internal
+    - project_pages_access_level:
+    - project_security_and_compliance_enabled:
+    - project_approvals_before_merge: 
+    - project_push_rules_unsigned_commits: true
+    - project_push_rules_comitter_check: true
+    - project_protected_branches: 
+    - project_access_tokens:
+    - project_deployment_tokens:
+    - project_keys:
+    - project_pipeline: 
+    - project_pipeline_stages: []
+    - project_pipeline_image: []
+    - project_codeowners: 
+  - '4321':
+    - project_visibility: public
+    - project_pages_access_level:
+    - project_security_and_compliance_enabled:
+    - project_approvals_before_merge: 
+    - project_push_rules_unsigned_commits: true
+    - project_push_rules_comitter_check: true
+    - project_protected_branches: 
+    - project_access_tokens:
+    - project_deployment_tokens:
+    - project_keys:
+    - project_pipeline: 
+    - project_pipeline_stages: []
+    - project_pipeline_image: []
+    - project_codeowners: 
+```
+
+### Check if any project is using as image in any part of the pipeline `docker:latest`:
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_visibility:
+    - project_pages_access_level:
+    - project_security_and_compliance_enabled:
+    - project_approvals_before_merge: 
+    - project_push_rules_unsigned_commits:
+    - project_push_rules_comitter_check:
+    - project_protected_branches: 
+    - project_access_tokens:
+    - project_deployment_tokens:
+    - project_keys:
+    - project_pipeline: 
+    - project_pipeline_stages: []
+    - project_pipeline_image: ['docker:latest']
+    - project_codeowners: 
+```
+
+### Check if any project is using `project_keys`, `project_deployment_tokens`, or `project_access_tokens`:
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_visibility:
+    - project_pages_access_level:
+    - project_security_and_compliance_enabled:
+    - project_approvals_before_merge: 
+    - project_push_rules_unsigned_commits:
+    - project_push_rules_comitter_check:
+    - project_protected_branches: 
+    - project_access_tokens: ''
+    - project_deployment_tokens: ''
+    - project_keys: ''
+    - project_pipeline: 
+    - project_pipeline_stages: []
+    - project_pipeline_image: []
+    - project_codeowners: 
+```
 
 ## Checks: Project
 
