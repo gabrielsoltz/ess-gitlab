@@ -3,6 +3,8 @@
 import gitlab
 import argparse
 import json
+import pyfiglet
+
 from helpers.projects.checks import *
 
 def connect(gitlab_url, gitlab_token):
@@ -28,6 +30,14 @@ def connect(gitlab_url, gitlab_token):
     # make an API request to create the gl.user object. This is mandatory if you
     # use the username/password authentication.
     #gl.auth()
+
+def banner():
+    ascii_banner = pyfiglet.figlet_format("Easy-Scan Gitlab")
+    print (ascii_banner)
+    print ('Gitlab URL:', gitlab_url)
+    print ('Mode:', mode)
+    print ('Check:', check)
+    print ('ID:', id)
 
 def check_project(gl, project_id):
     dict = {}
@@ -57,36 +67,57 @@ def check_baseline(baseline_file, scan):
         except yaml.YAMLError as exc:
             print(exc)
         for category, ids in baseline_yaml.items():
-            baseline_check_output_by_id = {}
-            baseline_check_output = {}
+            baseline_output_by_check_id = {}
             for id_dict in ids:
                 for id, values in id_dict.items():
                     for value in values:
                         for check, expected in value.items():
                             if str(id) == '*':
                                 for scans_id in scan['easyscan-gitlab'][category]:
+                                    if not scans_id in baseline_output_by_check_id:
+                                        baseline_output_by_check_id[scans_id] = []
+                                    baseline_output_by_check = {}
                                     #print('* Expected for project id', scans_id , 'check', check, 'is', expected, '(Found: ', scan['easyscan-gitlab'][category][scans_id][check], ')')
                                     if expected:
                                         result = scan['easyscan-gitlab'][category][scans_id][check]
-                                        if expected == result:
-                                            baseline_check_output.update({check: 'PASS'})
-                                            #print ('TRUE')
-                                        else:
-                                            baseline_check_output.update({check: 'FAIL'})
-                                            #print('FALSE')
-                                        baseline_check_output_by_id.update({scans_id: baseline_check_output})
-                            elif str(id) in scan['easyscan-gitlab'][category]:
+                                        if isinstance(expected, list):
+                                            for i in expected:
+                                                found = False
+                                                if result:
+                                                    if i in result:
+                                                        #print ('** TRUE')
+                                                        baseline_output_by_check.update({check: 'PASS'})
+                                                        found = True
+                                                elif not result:
+                                                    #print ('** TRUE2')
+                                                    baseline_output_by_check.update({check: 'FAIL'})
+                                                if not found:
+                                                    #print ('** TRUE3')
+                                                    baseline_output_by_check.update({check: 'FAIL'})
+                                        if isinstance(expected, str):
+                                            if expected == result:
+                                                baseline_output_by_check.update({check: 'PASS'})
+                                                #print ('TRUE')
+                                            else:
+                                                baseline_output_by_check.update({check: 'FAIL'})
+                                                #print('FALSE')
+                                        baseline_output_by_check_id[scans_id].append(baseline_output_by_check)
+                                        #print (baseline_output_by_check_id)
+                            elif int(id) in scan['easyscan-gitlab'][category]:
+                                if not id in baseline_output_by_check_id:
+                                    baseline_output_by_check_id[id] = []
+                                baseline_output_by_check = {}
                                 #print('Expected for project id', id , 'check', check, 'is', expected, '(Found: ', scan['easyscan-gitlab'][category][id][check], ')')
                                 if expected:
-                                    result = scan['easyscan-gitlab'][category][str(id)][check]
+                                    result = scan['easyscan-gitlab'][category][int(id)][check]
                                     if expected == result:
-                                        baseline_check_output.update({check: 'PASS'})
+                                        baseline_output_by_check.update({check: 'PASS'})
                                         #print ('TRUE')
                                     else:
-                                        baseline_check_output.update({check: 'FAIL'})
+                                        baseline_output_by_check.update({check: 'FAIL'})
                                         #print('FALSE')
-                                    baseline_check_output_by_id.update({id: baseline_check_output})
-        baseline_output.update({category: baseline_check_output_by_id})
+                                    baseline_output_by_check_id[id].append(baseline_output_by_check)
+            baseline_output.update({category: baseline_output_by_check_id})
     return baseline_output
 
 if __name__ == "__main__":
@@ -104,13 +135,16 @@ if __name__ == "__main__":
     gitlab_url = args["gitlab_url"]
     gitlab_token = args["gitlab_token"]
     mode = args["mode"]
-    id = args["id"]
     check = args["check"]
+    id = args["id"]
+
+    banner()
 
     gl = connect(gitlab_url, gitlab_token)
  
     if check == 'project':
-        projects = get_project_ids(gl, id)
+        projects, id_type = get_project_ids(gl, id)
+        print ('ID Type:', id_type)
         project_output = {}
         for project in projects:
             dict_project = check_project(gl, project)
