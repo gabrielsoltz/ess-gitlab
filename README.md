@@ -126,7 +126,7 @@ projects:
     - project_codeowners: 
 ```
 
-### Check if file Pipeline file (`.gitlab-ci.yml`) exists:
+### Check if Pipeline file (`.gitlab-ci.yml`) exists:
 
 Baseline:
 ```
@@ -148,7 +148,7 @@ projects:
     - project_codeowners: 
 ```
 
-### Check if file CODEOWNERS file (`CODEOWNERS`) exists:
+### Check if CODEOWNERS file (`CODEOWNERS`) exists:
 
 Baseline:
 ```
@@ -190,59 +190,100 @@ projects:
 
 ### Project Visibility
 
-These visibility levels affect who can see the project in the public access directory (/public for your GitLab instance). For example, https://gitlab.com/public. You can control the visibility of individual features with project feature settings.
-
-https://docs.gitlab.com/ee/public_access/public_access.html
-
+- [Gitlab Documentation](https://docs.gitlab.com/ee/public_access/public_access.html)
+- Baseline Key: `project_visibility`
+- Posible Outputs: `internal`, `public`, `private`
+- Default Baseline: `internal`
 
 ### Pages Access Level
 
-https://docs.gitlab.com/ee/user/project/pages/pages_access_control.html
+- [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/pages/pages_access_control.html)
+- Baseline Key: `project_pages_access_level`
+- Posible Outputs:
+- Default Baseline:
 
 ### Security and Compliance
 
-https://docs.gitlab.com/ee/user/application_security/configuration/
+- [Gitlab Documentation](https://docs.gitlab.com/ee/user/application_security/configuration/)
+- Baseline Key: `project_security_and_compliance_enabled`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `true`
 
 ### Approvals before Merge
 
-https://docs.gitlab.com/ee/user/project/merge_requests/approvals/
+- [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
+- Baseline Key: `project_approvals_before_merge`
+- Posible Outputs: `integer`
+- Default Baseline: `1`
+- TO DO: optional/required different output
 
 ### Push Rules: Unsigned Commits
 
-https://docs.gitlab.com/ee/push_rules/push_rules.html
+- [Gitlab Documentation](https://docs.gitlab.com/ee/push_rules/push_rules.html)
+- Baseline Key: `project_push_rules_unsigned_commits`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `true`
 
 ### Push Rules: Comitter Check
 
-https://docs.gitlab.com/ee/push_rules/push_rules.html
+- [Gitlab Documentation](https://docs.gitlab.com/ee/push_rules/push_rules.html)
+- Baseline Key: `project_push_rules_comitter_check`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `true`
 
 ### Protected Branches
 
-https://docs.gitlab.com/ee/user/project/protected_branches.html
+- [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/protected_branches.html)
+- Baseline Key: `project_protected_branches`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `true`
+- TO DO: Check by branch
 
 ### Project Access Tokens
 
-https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html
+- [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/settings/project_access_tokens.html)
+- Baseline Key: `project_access_tokens`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `false`
 
 ### Project Deployment Tokens
 
-https://docs.gitlab.com/ee/user/project/deploy_tokens/
+- [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/deploy_tokens/)
+- Baseline Key: `project_deploy_tokens`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `false`
 
 ### Project Keys
 
-https://docs.gitlab.com/ee/user/project/deploy_keys/
+- [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/deploy_keys/)
+- Baseline Key: `project_deploy_tokens`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `false`
 
 ### Project Pipeline file
 
-Check if file `.gitlab-ci.yml` exists.
+- [Gitlab Documentation](https://docs.gitlab.com/ee/ci/pipelines/index.html)
+- Baseline Key: `project_pipeline`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `true`
 
 #### Project Pipeline check Blocks (`stages`)
 
-Show all stages from the pipeline
+- [Gitlab Documentation](https://docs.gitlab.com/ee/ci/pipelines/pipeline_architectures.html)
+- Baseline Key: `project_pipeline_stages`
+- Posible Outputs: `list with all stages`
+- Default Baseline:
 
 #### Project Pipeline check Images in all blocks (`image`)
 
-Show all images being used in all stages of the pipeline
+- [Gitlab Documentation](https://docs.gitlab.com/ee/ci/pipelines/pipeline_architectures.html)
+- Baseline Key: `project_pipeline_image`
+- Posible Outputs: `list with all images`
+- Default Baseline:
 
 ### Project CODEOWNERS file
 
-Check if file CODEOWNERS exists.
+- [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/code_owners.html)
+- Baseline Key: `project_codeowners`
+- Posible Outputs: `boolean` (`true`/`false`)
+- Default Baseline: `true`
