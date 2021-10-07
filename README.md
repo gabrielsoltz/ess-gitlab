@@ -11,19 +11,19 @@ This tool can run in 2 different modes (`--mode`):
 
 ## How to use it
 
-You can define `--id` as a project id, a group id for getting all project ids under that group or all for getting all project ids.
+You can define `--id` as a project id, or a group id for getting all project ids under that group or all for getting all project ids.
 
 ### Inventory Mode
 
 `./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
-### Baseline for a specific project
+### Baseline Mode
 
 `./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
 ## Baselines Use Cases
 
-### Check if Push Rules: Unsigned Commits and Push Rules: Comitter Check are enabled for all projects (`*`)
+### Check if "Push Rules: Unsigned Commits" and "Push Rules: Comitter Check" are enabled for all projects (`*`)
 
 Baseline:
 ```
@@ -45,7 +45,7 @@ projects:
     - project_codeowners: 
 ```
 
-### Check if Project Visibility is `internal` for project `1234` and `public` for project `4321`
+### Check if "Project Visibility" is `internal` for project `1234` and `public` for project `4321`
 
 Baseline:
 ```
@@ -82,7 +82,7 @@ projects:
     - project_codeowners: 
 ```
 
-### Check if any project is using as image in any part of the pipeline `docker:latest`:
+### Check if any project is using the image `docker:latest` in any stage of the pipeline:
 
 Baseline:
 ```
