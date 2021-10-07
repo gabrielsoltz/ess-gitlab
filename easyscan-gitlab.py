@@ -32,7 +32,7 @@ def connect(gitlab_url, gitlab_token):
     #gl.auth()
 
 def banner():
-    ascii_banner = pyfiglet.figlet_format("Easy-Scan Gitlab")
+    ascii_banner = pyfiglet.figlet_format("EasyScan Gitlab")
     print (ascii_banner)
     print ('Gitlab URL:', gitlab_url)
     print ('Mode:', mode)
