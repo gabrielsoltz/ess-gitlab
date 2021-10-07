@@ -83,37 +83,37 @@ def check_project_access_tokens(gl, project_id):
         return {'project_access_tokens': '401 Unauthorized'}
 
 
-def check_project_deployment_tokens(gl, project_id):
+def check_project_deploy_tokens(gl, project_id):
     try:
-        deployment_tokens = get_project_deployment_tokens(gl, project_id)
-        for i in deployment_tokens:
-            deployment_tokens = i
+        project_deploy_tokens = get_project_deployment_tokens(gl, project_id)
+        for i in project_deploy_tokens:
+            project_deploy_tokens = i
         try:
-            return {'project_deployment_tokens': deployment_tokens._attrs}
+            return {'project_deploy_tokens': project_deploy_tokens._attrs}
         except:
-            return {'project_deployment_tokens': deployment_tokens}
+            return {'project_deploy_tokens': project_deploy_tokens}
     except exceptions.GitlabGetError:
-        return {'project_deployment_tokens': '403 Forbidden'}
+        return {'project_deploy_tokens': '403 Forbidden'}
     except exceptions.GitlabAuthenticationError:
-        return {'project_deployment_tokens': '401 Unauthorized'}
+        return {'project_deploy_tokens': '401 Unauthorized'}
     except exceptions.GitlabListError:
-        return {'project_deployment_tokens': '403 Forbidden'}
+        return {'project_deploy_tokens': '403 Forbidden'}
 
-def check_project_keys(gl, project_id):
+def check_project_deploy_keys(gl, project_id):
     try:
-        project_keys = get_project_keys(gl, project_id)
-        for i in project_keys:
-            project_keys = i
+        project_deploy_keys = get_project_keys(gl, project_id)
+        for i in project_deploy_keys:
+            project_deploy_keys = i
         try:
-            return {'project_keys': project_keys._attrs}
+            return {'project_deploy_keys': project_deploy_keys._attrs}
         except:
-            return {'project_keys': project_keys}
+            return {'project_deploy_keys': project_deploy_keys}
     except exceptions.GitlabGetError:
-        return {'project_keys': '403 Forbidden'}
+        return {'project_deploy_keys': '403 Forbidden'}
     except exceptions.GitlabAuthenticationError:
-        return {'project_keys': '401 Unauthorized'}
+        return {'project_deploy_keys': '401 Unauthorized'}
     except exceptions.GitlabListError:
-        return {'project_keys': '403 Forbidden'}
+        return {'project_deploy_keys': '403 Forbidden'}
 
 def check_project_pipeline(gl, project_id):
     try:
