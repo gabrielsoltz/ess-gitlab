@@ -11,7 +11,7 @@ This tool can run in 2 different modes (`--mode`):
 
 ## How to use it
 
-You can define `--id` as a project id, or a group id for getting all project ids under that group or all for getting all project ids.
+You can define `--id` as a "project id", as a "group id" for getting all project ids under that group or "all" for getting all project ids.
 
 ### Inventory Mode
 
