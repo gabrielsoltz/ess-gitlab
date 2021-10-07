@@ -126,6 +126,50 @@ projects:
     - project_codeowners: 
 ```
 
+### Check if file Pipeline file (`.gitlab-ci.yml`) exists:
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_visibility:
+    - project_pages_access_level:
+    - project_security_and_compliance_enabled:
+    - project_approvals_before_merge: 
+    - project_push_rules_unsigned_commits:
+    - project_push_rules_comitter_check:
+    - project_protected_branches: 
+    - project_access_tokens:
+    - project_deployment_tokens:
+    - project_keys:
+    - project_pipeline: true
+    - project_pipeline_stages: []
+    - project_pipeline_image: []
+    - project_codeowners: 
+```
+
+### Check if file CODEOWNERS file (`CODEOWNERS`) exists:
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_visibility:
+    - project_pages_access_level:
+    - project_security_and_compliance_enabled:
+    - project_approvals_before_merge: 
+    - project_push_rules_unsigned_commits:
+    - project_push_rules_comitter_check:
+    - project_protected_branches: 
+    - project_access_tokens:
+    - project_deployment_tokens:
+    - project_keys:
+    - project_pipeline:
+    - project_pipeline_stages: []
+    - project_pipeline_image: []
+    - project_codeowners: true
+```
+
 ## Checks: Project
 
 - Project Visibility
