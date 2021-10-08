@@ -1,10 +1,6 @@
-# None: disable check
-# Str: Match 1<>1 value
-# List: At least 1 of the value in the baseline must be in the output
-
 projects:
   - '*':
-    - project_visibility: `internal`
+    - project_visibility: 'internal'
     - project_pages_access_level:
     - project_security_and_compliance_enabled: True
     - project_approvals_before_merge: 1
@@ -15,6 +11,6 @@ projects:
     - project_deploy_tokens: False
     - project_deploy_keys: False
     - project_pipeline: True
-    - project_pipeline_stages: []
-    - project_pipeline_image: []
+    - project_pipeline_stages: None
+    - project_pipeline_image: None
     - project_codeowners: True
