@@ -180,8 +180,8 @@ def check_baseline_statistics(baseline):
                 elif value == 'PASS':
                     total_pass += 1
                     total_pass_by_project += 1
-        print ('Project:', projects, '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| Checks: ', total_checks)
-    print ('Total Projects:', total_projects, '| Total FAILS:', total_fails, '| Total PASS:', total_pass, '| Total Checks: ', total_checks_by_project)
+        print ('Project:', projects, '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| Checks: ', total_checks_by_project)
+    print ('Total Projects:', total_projects, '| Total FAILS:', total_fails, '| Total PASS:', total_pass, '| Total Checks: ', total_checks)
 
 def write_json(content, file_name):
     with open(file_name, 'w', encoding='utf-8') as f:
