@@ -64,6 +64,10 @@ def check_project(gl, project_id):
     return project_dict
 
 def check_baseline_items(expected, result):
+    try:
+        result = result.lstrip()
+    except:
+        result = result
     if isinstance(expected, list):
         for i in expected:
             found = False
@@ -133,25 +137,20 @@ def check_baseline(baseline_file, scan):
                                     baseline_output_by_check = {}
                                     logging.info('ProjectID: ' + str(scans_id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][scans_id][check]))
                                     if expected != 'None' and expected is not None:
-                                        try:
-                                            result = scan['easyscan-gitlab'][category][scans_id][check].lstrip()
-                                        except:
-                                            result = scan['easyscan-gitlab'][category][scans_id][check]
+                                        result = scan['easyscan-gitlab'][category][scans_id][check]
                                         if check_baseline_items(expected, result):
                                             baseline_output_by_check.update({check: 'PASS'})
                                         else:
                                             baseline_output_by_check.update({check: 'FAIL'})
                                         baseline_output_by_check_id[scans_id].append(baseline_output_by_check)
                             elif int(id) in scan['easyscan-gitlab'][category]:
+                                logging.info('Checking Baseline: ' + str(id))
                                 if not id in baseline_output_by_check_id:
                                     baseline_output_by_check_id[id] = []
                                 baseline_output_by_check = {}
-                                logging.info('Expected for project id', id , 'check', check, 'is', expected, '(type:', type(expected), ')' , '(Found: ', scan['easyscan-gitlab'][category][scans_id][check], ')')
+                                logging.info('ProjectID: ' + str(id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][id][check]))
                                 if expected != 'None' and expected is not None:
-                                    try:
-                                        result = scan['easyscan-gitlab'][category][int(id)][check].lstrip()
-                                    except:
-                                        result = scan['easyscan-gitlab'][category][int(id)][check]
+                                    result = scan['easyscan-gitlab'][category][int(id)][check]
                                     if check_baseline_items(expected, result):
                                         baseline_output_by_check.update({check: 'PASS'})
                                     else:
