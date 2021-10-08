@@ -251,6 +251,6 @@ if __name__ == "__main__":
     if mode == 'inventory':
         print(json.dumps(inventory, indent=4, sort_keys=True))
         if jsonfile:
-            write_json(baseline, 'invetory-' + id + '.json')
+            write_json(inventory, 'invetory-' + id + '.json')
     
     
