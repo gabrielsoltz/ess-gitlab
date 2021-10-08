@@ -121,6 +121,10 @@ def check_baseline(baseline_file, scan):
                 for id, values in id_dict.items():
                     for value in values:
                         for check, expected in value.items():
+                            try:
+                                expected = expected.lstrip()
+                            except:
+                                expected = expected
                             if str(id) == '*':
                                 logging.info('Checking Baseline: ' + str(id))
                                 for scans_id in scan['easyscan-gitlab'][category]:
@@ -128,7 +132,7 @@ def check_baseline(baseline_file, scan):
                                         baseline_output_by_check_id[scans_id] = []
                                     baseline_output_by_check = {}
                                     logging.info('ProjectID: ' + str(scans_id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][scans_id][check]))
-                                    if expected != None:
+                                    if expected != 'None' and expected is not None:
                                         try:
                                             result = scan['easyscan-gitlab'][category][scans_id][check].lstrip()
                                         except:
@@ -143,7 +147,7 @@ def check_baseline(baseline_file, scan):
                                     baseline_output_by_check_id[id] = []
                                 baseline_output_by_check = {}
                                 logging.info('Expected for project id', id , 'check', check, 'is', expected, '(type:', type(expected), ')' , '(Found: ', scan['easyscan-gitlab'][category][scans_id][check], ')')
-                                if expected != None:
+                                if expected != 'None' and expected is not None:
                                     try:
                                         result = scan['easyscan-gitlab'][category][int(id)][check].lstrip()
                                     except:
