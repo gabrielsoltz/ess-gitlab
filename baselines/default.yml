@@ -1,7 +1,7 @@
 projects:
   - '*':
     - project_visibility: 'internal'
-    - project_pages_access_level:
+    - project_pages_access_level: 'private'
     - project_security_and_compliance_enabled: True
     - project_approvals_before_merge: 1
     - project_push_rules_unsigned_commits: True

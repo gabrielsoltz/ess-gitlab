@@ -216,8 +216,8 @@ projects:
 
 - [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/pages/pages_access_control.html)
 - Baseline Key: `project_pages_access_level`
-- Inventory Outputs: `public`,
-- Default Baseline:
+- Inventory Outputs: `public`, `private`
+- Default Baseline: `private`
 
 ### Security and Compliance
 
