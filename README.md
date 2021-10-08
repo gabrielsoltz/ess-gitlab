@@ -36,6 +36,10 @@ You can define a baseline using the following type of values:
 - Bool: True matchs if output has data or if output True. False matchs if no Data or if output False.
 - List: At least 1 of the values must be in the output (Example: '[docker:latest]'). Empty list ('[]') same as False.
 
+You can define values for all projects using '*' or for a specific project using the project id like '1234'. You can add more than one project id in each baseline.
+
+TO DO: Baselines by Group IDs. 
+
 ### Check if "Push Rules: Unsigned Commits" and "Push Rules: Comitter Check" are enabled for all projects (`*`)
 
 Baseline:
