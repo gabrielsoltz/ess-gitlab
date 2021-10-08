@@ -4,6 +4,8 @@ import gitlab
 import argparse
 import json
 import pyfiglet
+import logging
+import sys, os
 
 from helpers.projects.checks import *
 
@@ -37,7 +39,9 @@ def banner():
     print ('Gitlab URL:', gitlab_url)
     print ('Mode:', mode)
     print ('Check:', check)
-    print ('ID:', id)
+    print ('Json File:', jsonfile)
+    print ('Log Level:', log_level)
+    print ('Baseline File:', baseline_file)
 
 def check_project(gl, project_id):
     dict = {}
@@ -59,6 +63,51 @@ def check_project(gl, project_id):
     project_dict = {project_id: dict}
     return project_dict
 
+def check_baseline_items(expected, result):
+    if isinstance(expected, list):
+        for i in expected:
+            found = False
+            if result:
+                if i in result:
+                    logging.info('List: Matched 1 list element')
+                    return True
+            elif not result:
+                logging.info('List: No matched list elements')
+                return False
+        if not expected and result:
+            logging.info('List: No elements in list but result found')
+            return False
+        elif not found and result:
+            logging.info('List: Elements in List but not matched')
+            return False
+    if isinstance(expected, str):
+        if expected == result:
+            logging.info('Str: Matched')
+            return True
+        else:
+            logging.info('Str: Not Matched')
+            return False
+    if isinstance(expected, bool):
+        if expected == result:
+            logging.info('Bool: Matched as ==')
+            return True
+        elif expected and result:
+            logging.info('Bool: Matched as True')
+            return True
+        elif not expected and not result: 
+            logging.info('Bool: Matched as False')
+            return True
+        else:
+            logging.info('Bool: Not Matched')
+            return False
+    if isinstance(expected, int):
+        if expected == result:
+            logging.info('Int: Matched')
+            return True
+        else:
+            logging.info('Int: Not matched')
+            return False
+
 def check_baseline(baseline_file, scan):
     baseline_output = {}
     with open(baseline_file, 'r') as stream:
@@ -73,70 +122,83 @@ def check_baseline(baseline_file, scan):
                     for value in values:
                         for check, expected in value.items():
                             if str(id) == '*':
+                                logging.info('Checking Baseline: ' + str(id))
                                 for scans_id in scan['easyscan-gitlab'][category]:
                                     if not scans_id in baseline_output_by_check_id:
                                         baseline_output_by_check_id[scans_id] = []
                                     baseline_output_by_check = {}
-                                    #print('* Expected for project id', scans_id , 'check', check, 'is', expected, '(Found: ', scan['easyscan-gitlab'][category][scans_id][check], ')')
-                                    if expected:
-                                        result = scan['easyscan-gitlab'][category][scans_id][check]
-                                        if isinstance(expected, list):
-                                            for i in expected:
-                                                found = False
-                                                if result:
-                                                    if i in result:
-                                                        #print ('** TRUE')
-                                                        baseline_output_by_check.update({check: 'PASS'})
-                                                        found = True
-                                                elif not result:
-                                                    #print ('** TRUE2')
-                                                    baseline_output_by_check.update({check: 'FAIL'})
-                                                if not found:
-                                                    #print ('** TRUE3')
-                                                    baseline_output_by_check.update({check: 'FAIL'})
-                                        if isinstance(expected, str):
-                                            if expected == result:
-                                                baseline_output_by_check.update({check: 'PASS'})
-                                                #print ('TRUE')
-                                            else:
-                                                baseline_output_by_check.update({check: 'FAIL'})
-                                                #print('FALSE')
+                                    logging.info('ProjectID: ' + str(scans_id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][scans_id][check]))
+                                    if expected != None:
+                                        try:
+                                            result = scan['easyscan-gitlab'][category][scans_id][check].lstrip()
+                                        except:
+                                            result = scan['easyscan-gitlab'][category][scans_id][check]
+                                        if check_baseline_items(expected, result):
+                                            baseline_output_by_check.update({check: 'PASS'})
+                                        else:
+                                            baseline_output_by_check.update({check: 'FAIL'})
                                         baseline_output_by_check_id[scans_id].append(baseline_output_by_check)
-                                        #print (baseline_output_by_check_id)
                             elif int(id) in scan['easyscan-gitlab'][category]:
                                 if not id in baseline_output_by_check_id:
                                     baseline_output_by_check_id[id] = []
                                 baseline_output_by_check = {}
-                                #print('Expected for project id', id , 'check', check, 'is', expected, '(Found: ', scan['easyscan-gitlab'][category][id][check], ')')
-                                if expected:
-                                    result = scan['easyscan-gitlab'][category][int(id)][check]
-                                    if expected == result:
+                                logging.info('Expected for project id', id , 'check', check, 'is', expected, '(type:', type(expected), ')' , '(Found: ', scan['easyscan-gitlab'][category][scans_id][check], ')')
+                                if expected != None:
+                                    try:
+                                        result = scan['easyscan-gitlab'][category][int(id)][check].lstrip()
+                                    except:
+                                        result = scan['easyscan-gitlab'][category][int(id)][check]
+                                    if check_baseline_items(expected, result):
                                         baseline_output_by_check.update({check: 'PASS'})
-                                        #print ('TRUE')
                                     else:
                                         baseline_output_by_check.update({check: 'FAIL'})
-                                        #print('FALSE')
                                     baseline_output_by_check_id[id].append(baseline_output_by_check)
             baseline_output.update({category: baseline_output_by_check_id})
     return baseline_output
 
+def write_json(content, file_name):
+    with open(file_name, 'w', encoding='utf-8') as f:
+        json.dump(content, f, ensure_ascii=False, indent=4)
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Gitlab Audit')
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,description='''
+    EasyScan Gitlab (Easy Scanning for Gitlab Mis-Configurations)
+    https://github.com/gabrielsoltz/easyscan-gitlab
+    Author: Gabriel Soltz
+    '''
+    )
 
-    parser.add_argument('--gitlab_url', help="Gitlab URL", required=True)
-    parser.add_argument('--gitlab_token', help="Gitlab Token", required=True)
-
-    parser.add_argument('--mode', help="Inventory or Baseline", required=True)
-
-    parser.add_argument('--check', help="Type of check (project)", required=True)
-    parser.add_argument('--id', help="Gitlab Project/Group ID", required=True)
+    parser.add_argument('-u', '--gitlab_url', help="Gitlab URL", required=True)
+    parser.add_argument('-t', '--gitlab_token', help="Gitlab Token", required=False)
+    parser.add_argument('-m', '--mode', help="Inventory or Baseline", required=True)
+    parser.add_argument('-c', '--check', help="Type of check (project)", required=True)
+    parser.add_argument('-i', '--id', help="Gitlab Project/Group ID", required=True)
+    parser.add_argument('-j', '--jsonfile', default="True", help="Write JSON Output (True/False)", required=False)
+    parser.add_argument('-l', '--log', default="ERROR", help="Log Level (Default: ERROR) (Valid Options: ERROR, INFO or DEBUG)" , required=False)
+    parser.add_argument('-b', '--baseline', default="baselines/default.yml", help="Baseline File (Default: baselines/default.yml)", required=False)
 
     args = vars(parser.parse_args())
     gitlab_url = args["gitlab_url"]
-    gitlab_token = args["gitlab_token"]
+    if args["gitlab_token"]:
+        gitlab_token = args["gitlab_token"]
+    else:
+        # Use environment variable
+        gitlab_token = os.environ.get("gitlab_token")
+        if gitlab_token == None:
+            logging.error("ERROR: No token found in environment, please check existence of 'gitlab_token' in current environment!")
+            sys.exit(1)
     mode = args["mode"]
     check = args["check"]
     id = args["id"]
+    jsonfile = args["jsonfile"]
+    log_level = args["log"]
+    if log_level == 'ERROR':
+        logging.basicConfig(level=logging.ERROR)
+    elif log_level == 'INFO':
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.DEBUG)
+    baseline_file = args["baseline"]
 
     banner()
 
@@ -150,11 +212,17 @@ if __name__ == "__main__":
             dict_project = check_project(gl, project)
             project_output.update(dict_project)
         projects_dict_output = {'projects': project_output}
-        scan = {'easyscan-gitlab': projects_dict_output}
+        inventory = {'easyscan-gitlab': projects_dict_output}
         
     if mode == 'baseline':
-        baseline_output = {'baseline': check_baseline('baselines/default.yml', scan)}
-        output = {'easyscan-gitlab': baseline_output}
-        print(json.dumps(output, indent=4, sort_keys=True))
+        baseline_output = {'baseline': check_baseline(baseline_file, inventory)}
+        baseline = {'easyscan-gitlab': baseline_output}
+        print(json.dumps(baseline, indent=4, sort_keys=True))
+        if jsonfile:
+            write_json(baseline, 'baseline-' + id + '.json')
     if mode == 'inventory':
-        print(json.dumps(scan, indent=4, sort_keys=True))
+        print(json.dumps(inventory, indent=4, sort_keys=True))
+        if jsonfile:
+            write_json(baseline, 'invetory-' + id + '.json')
+    
+    
