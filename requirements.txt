@@ -1,3 +1,4 @@
 pyfiglet
 pyyaml
 python-gitlab
+logging
