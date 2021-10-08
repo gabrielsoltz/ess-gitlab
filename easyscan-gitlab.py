@@ -159,6 +159,30 @@ def check_baseline(baseline_file, scan):
             baseline_output.update({category: baseline_output_by_check_id})
     return baseline_output
 
+def check_baseline_statistics(baseline):
+    print ('--------------- STATISTICS ---------------')
+    total_projects = 0 
+    total_fails = 0
+    total_pass = 0
+    total_checks = 0
+    for projects, findings in baseline['easyscan-gitlab']['baseline']['projects'].items():
+        total_projects += 1
+        total_fails_by_project = 0
+        total_pass_by_project = 0
+        total_checks_by_project = 0
+        for finding in findings:
+            for check, value in finding.items():
+                total_checks += 1
+                total_checks_by_project += 1
+                if value == 'FAIL':
+                    total_fails += 1
+                    total_fails_by_project += 1
+                elif value == 'PASS':
+                    total_pass += 1
+                    total_pass_by_project += 1
+        print ('Project:', projects, '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| Checks: ', total_checks)
+    print ('Total Projects:', total_projects, '| Total FAILS:', total_fails, '| Total PASS:', total_pass, '| Total Checks: ', total_checks_by_project)
+
 def write_json(content, file_name):
     with open(file_name, 'w', encoding='utf-8') as f:
         json.dump(content, f, ensure_ascii=False, indent=4)
@@ -223,6 +247,7 @@ if __name__ == "__main__":
         print(json.dumps(baseline, indent=4, sort_keys=True))
         if jsonfile:
             write_json(baseline, 'baseline-' + id + '.json')
+        check_baseline_statistics(baseline)
     if mode == 'inventory':
         print(json.dumps(inventory, indent=4, sort_keys=True))
         if jsonfile:
