@@ -1,7 +1,5 @@
 # EasyScan Gitlab
 
-! THIS IS A WORK IN PROGRESS
-
 Easy Scanning for Gitlab Mis-Configurations
 
 This tool can run in 2 different modes (`--mode`):
@@ -11,18 +9,45 @@ This tool can run in 2 different modes (`--mode`):
 
 ## How to use it
 
+### Project ID / Group ID / All Projects
+
 You can define `--id` as a "project id", as a "group id" for getting all project ids under that group or "all" for getting all project ids.
 
+### Gitlab Token
+
+For EasyScan to function properly it requires certain Gitlab scopes. Ensure you have at a minimum maintainer priviliges on the repository and use read_only (read_user, read_api, read_repository, read_registry) scopes for the Gitlab API token.
+
+You can supply the gitlab token in two ways to EasyScan:
+1. Use environment variables called "gitlab_token" (RECOMMENDED)
+2. Use CLI switch --gitlab_token
+
 ### Inventory Mode
+
+Environment variable
+
+`EXPORT gitlab_token=<<token_value>>`
+
+`./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
+
+CLI Switch
 
 `./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
 ### Baseline Mode
 
+Environment variable
+
+`EXPORT gitlab_token=<<token_value>>`
+
+`./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
+
+CLI Switch
+
 `./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
 ### Optional Arguments
 
+- `--gitlab_token`: Gitlab API token with sufficient scope and privileges.
 - `--jsonfile`: Generates JSON file with output (inventory or baseline). Default: True
 - `--baseline`: Defines where is the baseline file. Default: `baselines/default.yml`
 - `--log`: Logger level. Valid Options: ERROR, INFO or DEBUG. Default: ERROR
