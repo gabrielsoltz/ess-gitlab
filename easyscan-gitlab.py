@@ -132,8 +132,12 @@ def check_baseline(baseline_file, scan):
                             if str(id) == '*':
                                 logging.info('Checking Baseline: ' + str(id))
                                 for scans_id in scan['easyscan-gitlab'][category]:
+                                    project_name = scan['easyscan-gitlab'][category][scans_id]['project_info']['name_with_namespace']
+                                    project_url = scan['easyscan-gitlab'][category][scans_id]['project_info']['web_url']
                                     if not scans_id in baseline_output_by_check_id:
                                         baseline_output_by_check_id[scans_id] = []
+                                        baseline_output_by_check_id[scans_id].append({'name': project_name})
+                                        baseline_output_by_check_id[scans_id].append({'url': project_url})
                                     baseline_output_by_check = {}
                                     logging.info('ProjectID: ' + str(scans_id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][scans_id][check]))
                                     if expected != 'None' and expected is not None:
@@ -143,14 +147,18 @@ def check_baseline(baseline_file, scan):
                                         else:
                                             baseline_output_by_check.update({check: 'FAIL'})
                                         baseline_output_by_check_id[scans_id].append(baseline_output_by_check)
-                            elif int(id) in scan['easyscan-gitlab'][category]:
+                            elif str(id) in scan['easyscan-gitlab'][category]:
+                                project_name = scan['easyscan-gitlab'][category][str(id)]['project_info']['name_with_namespace']
+                                project_url = scan['easyscan-gitlab'][category][str(id)]['project_info']['web_url']
                                 logging.info('Checking Baseline: ' + str(id))
                                 if not id in baseline_output_by_check_id:
                                     baseline_output_by_check_id[id] = []
+                                    baseline_output_by_check_id[id].append({'name': project_name})
+                                    baseline_output_by_check_id[id].append({'url': project_url})
                                 baseline_output_by_check = {}
-                                logging.info('ProjectID: ' + str(id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][id][check]))
+                                logging.info('ProjectID: ' + str(id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][str(id)][check]))
                                 if expected != 'None' and expected is not None:
-                                    result = scan['easyscan-gitlab'][category][int(id)][check]
+                                    result = scan['easyscan-gitlab'][category][str(id)][check]
                                     if check_baseline_items(expected, result):
                                         baseline_output_by_check.update({check: 'PASS'})
                                     else:
@@ -172,17 +180,23 @@ def check_baseline_statistics(baseline):
         total_checks_by_project = 0
         for finding in findings:
             for check, value in finding.items():
-                total_checks += 1
-                total_checks_by_project += 1
-                if value == 'FAIL':
-                    total_fails += 1
-                    total_fails_by_project += 1
-                elif value == 'PASS':
-                    total_pass += 1
-                    total_pass_by_project += 1
-        print ('Project:', projects, '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| Checks: ', total_checks_by_project)
+                if check == 'name' or check == 'url':
+                    if check == 'name':
+                        name = value
+                    if check == 'url':
+                        url = value
+                else:
+                    total_checks += 1
+                    total_checks_by_project += 1
+                    if value == 'FAIL':
+                        total_fails += 1
+                        total_fails_by_project += 1
+                    elif value == 'PASS':
+                        total_pass += 1
+                        total_pass_by_project += 1
+        print ('Project:', name, ' (', projects, ')', '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| Checks: ', total_checks_by_project)
     print ('Total Projects:', total_projects, '| Total FAILS:', total_fails, '| Total PASS:', total_pass, '| Total Checks: ', total_checks)
-
+    
 def write_json(content, file_name):
     with open(file_name, 'w', encoding='utf-8') as f:
         json.dump(content, f, ensure_ascii=False, indent=4)
