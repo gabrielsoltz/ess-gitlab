@@ -15,3 +15,4 @@ projects:
     - project_pipeline_image: None
     - project_codeowners: True
     - project_shared_runners_enabled: False
+    - project_runners: True

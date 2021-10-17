@@ -97,4 +97,10 @@ def get_project_pipeline_content_of_block(pipeline_file, block):
 
 def get_project_shared_runners_enabled(gl, project_id):
     project = gl.projects.get(project_id)
+    get_project_runners(gl, project_id)
     return project.shared_runners_enabled
+
+def get_project_runners(gl, project_id):
+    project = gl.projects.get(project_id)
+    runners = project.runners.list()
+    return runners

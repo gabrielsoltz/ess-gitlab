@@ -231,6 +231,7 @@ projects:
 - Project Pipeline block: `image`
 - Project CODEOWNERS file
 - Project Shared Runners
+- Project Runners
 
 ### Project Visibility
 
@@ -338,3 +339,10 @@ projects:
 - Baseline Key: `project_shared_runners_enabled`
 - Inventory Outputs: `true`, `false`
 - Default Baseline: `False`
+
+### Project Runners
+
+- [Gitlab Documentation](https://docs.gitlab.com/runner/)
+- Baseline Key: `project_runners`
+- Inventory Outputs: List with all runners configured in the project
+- Default Baseline: `True`
