@@ -157,12 +157,8 @@ def check_project_runners(gl, project_id):
         project_runners = get_project_runners(gl, project_id)
         project_runners_list = []
         for i in project_runners:
-            project_runners = i
-            try:
-                project_runners = project_runners._attrs
-            except:
-                project_runners = project_runners
-            project_runners_list.append(project_runners)
+            runner = gl.runners.get(i.id)
+            project_runners_list.append(runner._attrs)
         try:
             return {'project_runners': project_runners_list}
         except:
