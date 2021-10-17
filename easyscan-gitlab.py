@@ -232,8 +232,19 @@ if __name__ == "__main__":
         if gitlab_token == None:
             logging.error("ERROR: No token found in environment, please check existence of 'gitlab_token' in current environment!")
             sys.exit(1)
+
     mode = args["mode"]
+    available_modes = ('baseline', 'inventory')
+    if mode not in available_modes:
+        logging.error("ERROR: Wrong mode. Use: {}".format(",".join(map(str,available_modes))))
+        sys.exit(1)
+
     check = args["check"]
+    available_checks = ('project', )
+    if mode not in available_checks:
+        logging.error("ERROR: Wrong check. Use: {}".format(",".join(map(str,available_checks))))
+        sys.exit(1)
+
     id = args["id"]
 
     jsonfile = True
