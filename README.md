@@ -230,7 +230,7 @@ projects:
 - Project Pipeline block: `stages`
 - Project Pipeline block: `image`
 - Project CODEOWNERS file
-
+- Project Shared Runners
 
 ### Project Visibility
 
