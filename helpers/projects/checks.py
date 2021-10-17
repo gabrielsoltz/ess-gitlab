@@ -145,4 +145,9 @@ def check_project_codeowners(gl, project_id):
     except exceptions.GitlabGetError:
         return {'project_codeowners': False}
     
-    
+def check_project_shared_runners_enabled(gl, project_id):
+    try:
+        shared_runners_enabled = get_project_shared_runners_enabled(gl, project_id)
+    except exceptions.GitlabGetError:
+        return {'project_shared_runners_enabled': '403 Forbidden'}
+    return {'project_shared_runners_enabled': shared_runners_enabled}

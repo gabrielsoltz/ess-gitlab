@@ -329,3 +329,10 @@ projects:
 - Baseline Key: `project_codeowners`
 - Inventory Outputs: `true`, `false`
 - Default Baseline: `True`
+
+### Project Shared Runners
+
+- [Gitlab Documentation](https://docs.gitlab.com/ee/ci/runners/runners_scope.html#shared-runners)
+- Baseline Key: `project_shared_runners_enabled`
+- Inventory Outputs: `true`, `false`
+- Default Baseline: `False`

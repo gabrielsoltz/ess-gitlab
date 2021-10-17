@@ -94,3 +94,7 @@ def get_project_pipeline_content_of_block(pipeline_file, block):
              if str(j).strip().lower() == block:     
                 project_pipeline_images['project_pipeline_' + block].append(pipeline_yaml[i][block])
     return project_pipeline_images
+
+def get_project_shared_runners_enabled(gl, project_id):
+    project = gl.projects.get(project_id)
+    return project.shared_runners_enabled
