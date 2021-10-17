@@ -150,6 +150,10 @@ def check_project_shared_runners_enabled(gl, project_id):
         shared_runners_enabled = get_project_shared_runners_enabled(gl, project_id)
     except exceptions.GitlabGetError:
         return {'project_shared_runners_enabled': '403 Forbidden'}
+    except exceptions.GitlabAuthenticationError:
+        return {'project_shared_runners_enabled': '401 Unauthorized'}
+    except exceptions.GitlabListError:
+        return {'project_shared_runners_enabled': '403 Forbidden'}
     return {'project_shared_runners_enabled': shared_runners_enabled}
 
 def check_project_runners(gl, project_id):
@@ -157,11 +161,15 @@ def check_project_runners(gl, project_id):
         project_runners = get_project_runners(gl, project_id)
         project_runners_list = []
         for i in project_runners:
-            runner = gl.runners.get(i.id)
-            project_runners_list.append(runner._attrs)
-        try:
-            return {'project_runners': project_runners_list}
-        except:
+            try:
+                runner = gl.runners.get(i.id)
+                project_runners_list.append(runner._attrs)
+            except exceptions.GitlabGetError:
+                project_runners_list.append(project_runners)
+            except exceptions.GitlabAuthenticationError:
+                project_runners_list.append(project_runners)
+            except exceptions.GitlabListError:
+                project_runners_list.append(project_runners)
             return {'project_runners': project_runners_list}
     except exceptions.GitlabGetError:
         return {'project_runners': '403 Forbidden'}
