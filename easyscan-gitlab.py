@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
     check = args["check"]
     available_checks = ('project', )
-    if mode not in available_checks:
+    if check not in available_checks:
         logging.error("ERROR: Wrong check. Use: {}".format(",".join(map(str,available_checks))))
         sys.exit(1)
 
