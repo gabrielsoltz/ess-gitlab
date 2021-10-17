@@ -48,9 +48,11 @@ CLI Switch
 ### Optional Arguments
 
 - `--gitlab_token`: Gitlab API token with sufficient scope and privileges.
-- `--jsonfile`: Generates JSON file with output (inventory or baseline). Default: True
+- `--jsonfile`: Generates JSON file with output (inventory or baseline). Use --no-jsonfile, or omit, to not write to file.
+- `--jsonprint`: Print JSON to stdout. Use --no-jsonprint, or omit, to not write to stdout.
 - `--baseline`: Defines where is the baseline file. Default: `baselines/default.yml`
 - `--log`: Logger level. Valid Options: ERROR, INFO or DEBUG. Default: ERROR
+- `--totalonly`: Only write total project findings to stdout.
 
 ## Baselines
 

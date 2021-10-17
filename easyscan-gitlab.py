@@ -195,13 +195,14 @@ def check_baseline_statistics(baseline):
                     elif value == 'PASS':
                         total_pass += 1
                         total_pass_by_project += 1
-        print ('Project:', name, ' (', projects, ')', '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| Checks: ', total_checks_by_project)
+        if not totalonly:
+            print ('Project:', name, ' (', projects, ')', '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| Checks: ', total_checks_by_project)
     print ('Total Projects:', total_projects, '| Total FAILS:', total_fails, '| Total PASS:', total_pass, '| Total Checks: ', total_checks)
     
 def write_json(content, file_name):
     with open(file_name, 'w', encoding='utf-8') as f:
         json.dump(content, f, ensure_ascii=False, indent=4)
-
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,description='''
     EasyScan Gitlab (Easy Scanning for Gitlab Mis-Configurations)
@@ -215,9 +216,11 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--mode', help="Inventory or Baseline", required=True)
     parser.add_argument('-c', '--check', help="Type of check (project)", required=True)
     parser.add_argument('-i', '--id', help="Gitlab Project/Group ID", required=True)
-    parser.add_argument('-j', '--jsonfile', default="True", help="Write JSON Output (True/False)", required=False)
+    parser.add_argument('-j', '--jsonfile', action=argparse.BooleanOptionalAction, help="Write JSON Output", required=False)
+    parser.add_argument('-p', '--jsonprint', action=argparse.BooleanOptionalAction, help="Show JSON Output", required=False)
     parser.add_argument('-l', '--log', default="ERROR", help="Log Level (Default: ERROR) (Valid Options: ERROR, INFO or DEBUG)" , required=False)
     parser.add_argument('-b', '--baseline', default="baselines/default.yml", help="Baseline File (Default: baselines/default.yml)", required=False)
+    parser.add_argument('-to', '--totalonly', action="store_true", help="Show total only", required=False)
 
     args = vars(parser.parse_args())
     gitlab_url = args["gitlab_url"]
@@ -232,7 +235,15 @@ if __name__ == "__main__":
     mode = args["mode"]
     check = args["check"]
     id = args["id"]
-    jsonfile = args["jsonfile"]
+
+    jsonfile = True
+    if not args["jsonfile"]:
+        jsonfile = False
+
+    jsonprint = True
+    if not args["jsonprint"]:
+        jsonprint = False
+
     log_level = args["log"]
     if log_level == 'ERROR':
         logging.basicConfig(level=logging.ERROR)
@@ -240,7 +251,14 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO)
     else:
         logging.basicConfig(level=logging.DEBUG)
+    
     baseline_file = args["baseline"]
+
+    totalonly = args["totalonly"]
+    if totalonly:
+        print("totalonly:true")
+    else:
+        print("totalonly:false")
 
     banner()
 
@@ -249,23 +267,31 @@ if __name__ == "__main__":
     if check == 'project':
         projects, id_type = get_project_ids(gl, id)
         print ('ID Type:', id_type)
+        print ('# Projects: ', str(len(projects)))
         project_output = {}
+        count = 0
         for project in projects:
+            count += 1
+            print(str(count) + "/" + str(len(projects)) + "... ")
             dict_project = check_project(gl, project)
             project_output.update(dict_project)
+
         projects_dict_output = {'projects': project_output}
         inventory = {'easyscan-gitlab': projects_dict_output}
         
     if mode == 'baseline':
         baseline_output = {'baseline': check_baseline(baseline_file, inventory)}
         baseline = {'easyscan-gitlab': baseline_output}
-        print(json.dumps(baseline, indent=4, sort_keys=True))
+        if jsonprint:
+            print(json.dumps(baseline, indent=4, sort_keys=True))
+        else:
+            print("not dumped JSON")
         if jsonfile:
             write_json(baseline, 'baseline-' + id + '.json')
+        else:
+            print("Not writing JSON files")
         check_baseline_statistics(baseline)
     if mode == 'inventory':
         print(json.dumps(inventory, indent=4, sort_keys=True))
         if jsonfile:
             write_json(inventory, 'invetory-' + id + '.json')
-    
-    
