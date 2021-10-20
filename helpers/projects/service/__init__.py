@@ -85,14 +85,15 @@ def get_project_pipeline_content_of_block(pipeline_file, block):
         pipeline_yaml = yaml.safe_load(pipeline_file)
     except:
         return project_pipeline_images
-    for i in pipeline_yaml:
-        if str(i).strip().lower() == block:
-            project_pipeline_images['project_pipeline_' + block].append(pipeline_yaml[i])
-        if str(pipeline_yaml[i]).strip().lower() == block:
-            project_pipeline_images['project_pipeline_' + block].append(pipeline_yaml[i][block])
-        for j in pipeline_yaml[i]:
-             if str(j).strip().lower() == block:     
+    if pipeline_yaml:       
+        for i in pipeline_yaml:
+            if str(i).strip().lower() == block:
+                project_pipeline_images['project_pipeline_' + block].append(pipeline_yaml[i])
+            if str(pipeline_yaml[i]).strip().lower() == block:
                 project_pipeline_images['project_pipeline_' + block].append(pipeline_yaml[i][block])
+            for j in pipeline_yaml[i]:
+                if str(j).strip().lower() == block:
+                        project_pipeline_images['project_pipeline_' + block].append(pipeline_yaml[i][j])
     return project_pipeline_images
 
 def get_project_shared_runners_enabled(gl, project_id):
