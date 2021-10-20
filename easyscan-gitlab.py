@@ -134,8 +134,16 @@ def check_baseline(baseline_file, scan):
                             if str(id) == '*':
                                 logging.info('Checking Baseline: ' + str(id))
                                 for scans_id in scan['easyscan-gitlab'][category]:
-                                    project_name = scan['easyscan-gitlab'][category][scans_id]['project_info']['name_with_namespace']
-                                    project_url = scan['easyscan-gitlab'][category][scans_id]['project_info']['web_url']
+                                    try:
+                                        project_name = scan['easyscan-gitlab'][category][scans_id]['project_info']['name_with_namespace']
+                                    except: 
+                                        project_name = scan['easyscan-gitlab'][category][scans_id]['project_info']
+                                        logging.error('ProjectID: ' + str(scans_id) + ' | project_name error: ' + project_name)
+                                    try:
+                                        project_url = scan['easyscan-gitlab'][category][scans_id]['project_info']['web_url']
+                                    except:
+                                        project_url = scan['easyscan-gitlab'][category][scans_id]['project_info']
+                                        logging.error('ProjectID: ' + str(scans_id) + ' | project_url error: ' + project_url)
                                     if not scans_id in baseline_output_by_check_id:
                                         baseline_output_by_check_id[scans_id] = []
                                         baseline_output_by_check_id[scans_id].append({'name': project_name})
@@ -150,9 +158,17 @@ def check_baseline(baseline_file, scan):
                                             baseline_output_by_check.update({check: 'FAIL'})
                                         baseline_output_by_check_id[scans_id].append(baseline_output_by_check)
                             elif str(id) in scan['easyscan-gitlab'][category]:
-                                project_name = scan['easyscan-gitlab'][category][str(id)]['project_info']['name_with_namespace']
-                                project_url = scan['easyscan-gitlab'][category][str(id)]['project_info']['web_url']
                                 logging.info('Checking Baseline: ' + str(id))
+                                try:
+                                    project_name = scan['easyscan-gitlab'][category][str(id)]['project_info']['name_with_namespace']
+                                except: 
+                                    project_name = scan['easyscan-gitlab'][category][str(id)]['project_info']
+                                    logging.error('ProjectID: ' + str(scans_id) + ' | project_name error: ' + project_name)
+                                try:
+                                    project_url = scan['easyscan-gitlab'][category][str(id)]['project_info']['web_url']
+                                except:
+                                    project_url = scan['easyscan-gitlab'][category][str(id)]['project_info']
+                                    logging.error('ProjectID: ' + str(scans_id) + ' | project_url error: ' + project_url)
                                 if not id in baseline_output_by_check_id:
                                     baseline_output_by_check_id[id] = []
                                     baseline_output_by_check_id[id].append({'name': project_name})
