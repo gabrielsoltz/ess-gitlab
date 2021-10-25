@@ -104,24 +104,24 @@ class GitlabProjectService():
                 except:
                     project_labels_list.append(project_label)
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project labels: {}'.format(e))
+            self.logging.error('Error getting project {} labels: {}'.format(self.project_id, e))
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project labels: {}'.format(e))
+            self.logging.error('Error getting project {} labels: {}'.format(self.project_id, e))
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project labels: {}'.format(e))
+            self.logging.error('Error getting project {} labels: {}'.format(self.project_id, e))
         return project_labels_list
 
     def get_project_attributes(self):
         try:
             project_attributes = self.project.attributes
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project attributes: {}'.format(e))
+            self.logging.error('Error getting project {} attributes: {}'.format(self.project_id, e))
             project_attributes = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project attributes: {}'.format(e))
+            self.logging.error('Error getting project {} attributes: {}'.format(self.project_id, e))
             project_attributes = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project attributes: {}'.format(e))
+            self.logging.error('Error getting project {} attributes: {}'.format(self.project_id, e))
             project_attributes = None
         return project_attributes
 
@@ -129,13 +129,13 @@ class GitlabProjectService():
         try:
             project_languages = self.project.languages()
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project languages: {}'.format(e))
+            self.logging.error('Error getting project {} languages: {}'.format(self.project_id, e))
             project_languages = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project languages: {}'.format(e))
+            self.logging.error('Error getting project {} languages: {}'.format(self.project_id, e))
             project_languages = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project languages: {}'.format(e))
+            self.logging.error('Error getting project {} languages: {}'.format(self.project_id, e))
             project_languages = None
         return project_languages
 
@@ -143,13 +143,13 @@ class GitlabProjectService():
         try:
             project_contributors = self.project.repository_contributors()
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project contributors: {}'.format(e))
+            self.logging.error('Error getting project {} contributors: {}'.format(self.project_id, e))
             project_contributors = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project contributors: {}'.format(e))
+            self.logging.error('Error getting project {} contributors: {}'.format(self.project_id, e))
             project_contributors = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project contributors: {}'.format(e))
+            self.logging.error('Error getting project {} contributors: {}'.format(self.project_id, e))
             project_contributors = None
         return project_contributors
 
@@ -157,13 +157,13 @@ class GitlabProjectService():
         try:
             push_rules = self.project.pushrules.get()
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project push rules: {}'.format(e))
+            self.logging.error('Error getting project {} push rules: {}'.format(self.project_id, e))
             push_rules = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project push rules: {}'.format(e))
+            self.logging.error('Error getting project {} push rules: {}'.format(self.project_id, e))
             push_rules = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project push rules: {}'.format(e))
+            self.logging.error('Error getting project {} push rules: {}'.format(self.project_id, e))
             push_rules = None
         return push_rules
 
@@ -171,13 +171,13 @@ class GitlabProjectService():
         try:
             protectedbranches = self.project.protectedbranches.list()
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project protected branches: {}'.format(e))
+            self.logging.error('Error getting project {} protected branches: {}'.format(self.project_id, e))
             protectedbranches = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project protected branches: {}'.format(e))
+            self.logging.error('Error getting project {} protected branches: {}'.format(self.project_id, e))
             protectedbranches = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project protected branches: {}'.format(e))
+            self.logging.error('Error getting project {} protected branches: {}'.format(self.project_id, e))
             protectedbranches = None
         return protectedbranches
         
@@ -185,13 +185,13 @@ class GitlabProjectService():
         try:
             access_tokens = self.project.access_tokens.list()
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project access tokens: {}'.format(e))
+            self.logging.error('Error getting project {} access tokens: {}'.format(self.project_id, e))
             access_tokens = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project access tokens: {}'.format(e))
+            self.logging.error('Error getting project {} access tokens: {}'.format(self.project_id, e))
             access_tokens = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project access tokens: {}'.format(e))
+            self.logging.error('Error getting project {} access tokens: {}'.format(self.project_id, e))
             access_tokens = None
         return access_tokens
 
@@ -199,13 +199,13 @@ class GitlabProjectService():
         try:
             deploy_tokens = self.project.deploytokens.list()
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project deploy tokens: {}'.format(e))
+            self.logging.error('Error getting project {} deploy tokens: {}'.format(self.project_id, e))
             deploy_tokens = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project deploy tokens: {}'.format(e))
+            self.logging.error('Error getting project {} deploy tokens: {}'.format(self.project_id, e))
             deploy_tokens = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project deploy tokens: {}'.format(e))
+            self.logging.error('Error getting project {} deploy tokens: {}'.format(self.project_id, e))
             deploy_tokens = None
         return deploy_tokens
 
@@ -213,13 +213,13 @@ class GitlabProjectService():
         try:
             deploy_keys = self.project.keys.list()
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project deploy keys: {}'.format(e))
+            self.logging.error('Error getting project {} deploy keys: {}'.format(self.project_id, e))
             deploy_keys = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project deploy keys: {}'.format(e))
+            self.logging.error('Error getting project {} deploy keys: {}'.format(self.project_id, e))
             deploy_keys = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project deploy keys: {}'.format(e))
+            self.logging.error('Error getting project {} deploy keys: {}'.format(self.project_id, e))
             deploy_keys = None
         return deploy_keys
 
@@ -231,13 +231,13 @@ class GitlabProjectService():
             if '404' in str(e):
                 project_file = False
             else:
-                self.logging.error('Error getting project file: {} {}'.format(file, e))
+                self.logging.error('Error getting project {} file: {} {}'.format(self.project_id, file, e))
                 project_file = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project file: {} {}'.format(file, e))
+            self.logging.error('Error getting project {} file: {} {}'.format(self.project_id, file, e))
             project_file = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project file: {} {}'.format(file, e))
+            self.logging.error('Error getting project {} file: {} {}'.format(self.project_id, file, e))
             project_file = None
         return project_file
 
@@ -248,7 +248,7 @@ class GitlabProjectService():
             except KeyError:
                 pipeline_block = False
             except:
-                self.logging.error('Error getting project pipeline block: {}'.format(block))
+                self.logging.error('Error getting project {} pipeline block: {}'.format(self.project_id, block))
                 pipeline_block = None
         else:
             pipeline_block = []
@@ -260,7 +260,7 @@ class GitlabProjectService():
             try:
                 pipeline_yaml = yaml.safe_load(pipeline_file)
             except:
-                self.logging.error('Error getting project pipeline block content: {}'.format(block))
+                self.logging.error('Error getting project {} pipeline block content: {}'.format(self.project_id, block))
                 pipeline_block_content = None
                 return pipeline_block_content
             if pipeline_yaml:
@@ -281,12 +281,12 @@ class GitlabProjectService():
         try:
             runners = self.project.runners.list()
         except exceptions.GitlabGetError as e:
-            self.logging.error('Error getting project runners: {}'.format(e))
+            self.logging.error('Error getting project {} runners: {}'.format(self.project_id, e))
             runners = None
         except exceptions.GitlabAuthenticationError as e:
-            self.logging.error('Error getting project runners: {}'.format(e))
+            self.logging.error('Error getting project {} runners: {}'.format(self.project_id, e))
             runners = None
         except exceptions.GitlabListError as e:
-            self.logging.error('Error getting project runners: {}'.format(e))
+            self.logging.error('Error getting project {} runners: {}'.format(self.project_id, e))
             runners = None
         return runners
