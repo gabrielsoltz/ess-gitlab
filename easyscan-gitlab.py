@@ -7,6 +7,7 @@ import pyfiglet
 import logging
 import sys, os
 
+from helpers.projects.service import GitlabGroupService, GitlabProjectService
 from helpers.projects.checks import *
 
 def connect(gitlab_url, gitlab_token):
@@ -42,27 +43,29 @@ def banner():
     print ('Json File:', jsonfile)
     print ('Log Level:', log_level)
     print ('Baseline File:', baseline_file)
+    print ('Total Only:', totalonly)
 
-def check_project(gl, project_id):
+def check_project(gl_project):
     dict = {}
-    dict.update(get_project_info(gl, project_id))
-    dict.update(check_project_visibility(gl, project_id))
-    dict.update(check_project_pages_access_level(gl, project_id))
-    dict.update(check_project_security_and_compliance_enabled(gl, project_id))
-    dict.update(check_project_approvals_before_merge(gl, project_id))
-    dict.update(check_project_push_rules_unsigned_commits(gl, project_id))
-    dict.update(check_project_push_rules_comitter_check(gl, project_id))
-    dict.update(check_project_protected_branches(gl, project_id))
-    dict.update(check_project_access_tokens(gl, project_id))
-    dict.update(check_project_deploy_tokens(gl, project_id))
-    dict.update(check_project_deploy_keys(gl, project_id))
-    dict.update(check_project_pipeline(gl, project_id))
-    dict.update(check_project_pipeline_stages(gl, project_id))
-    dict.update(check_project_pipeline_images(gl, project_id))
-    dict.update(check_project_codeowners(gl, project_id))
-    dict.update(check_project_shared_runners_enabled(gl, project_id))
-    dict.update(check_project_runners(gl, project_id))
-    project_dict = {project_id: dict}
+    dict.update(gl_project.project_info)
+    dict.update(check_project_visibility(gl_project))
+    dict.update(check_project_pages_access_level(gl_project))
+    dict.update(check_project_security_and_compliance_enabled(gl_project))
+    dict.update(check_project_approvals_before_merge(gl_project))
+    dict.update(check_project_push_rules_unsigned_commits(gl_project))
+    dict.update(check_project_push_rules_comitter_check(gl_project))
+    dict.update(check_project_protected_branches(gl_project))
+    dict.update(check_project_access_tokens(gl_project))
+    dict.update(check_project_deploy_tokens(gl_project))
+    dict.update(check_project_deploy_keys(gl_project))
+    dict.update(check_project_pipeline(gl_project))
+    dict.update(check_project_pipeline_stages(gl_project))
+    dict.update(check_project_pipeline_images(gl_project))
+    dict.update(check_project_codeowners(gl_project))
+    dict.update(check_project_shared_runners_enabled(gl_project))
+    dict.update(check_project_runners_shared(gl_project))
+    dict.update(check_project_runners_notshared(gl_project))
+    project_dict = {gl_project.project_id: dict}
     return project_dict
 
 def check_baseline_items(expected, result):
@@ -70,6 +73,9 @@ def check_baseline_items(expected, result):
         result = result.lstrip()
     except:
         result = result
+    if result == 'ERROR':
+        logging.info('Str: ERROR')
+        return 'ERROR'
     if isinstance(expected, list):
         for i in expected:
             found = False
@@ -152,7 +158,9 @@ def check_baseline(baseline_file, scan):
                                     logging.info('ProjectID: ' + str(scans_id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][scans_id][check]))
                                     if expected != 'None' and expected is not None:
                                         result = scan['easyscan-gitlab'][category][scans_id][check]
-                                        if check_baseline_items(expected, result):
+                                        if check_baseline_items(expected, result) == 'ERROR':
+                                            baseline_output_by_check.update({check: 'ERROR'})
+                                        elif check_baseline_items(expected, result):
                                             baseline_output_by_check.update({check: 'PASS'})
                                         else:
                                             baseline_output_by_check.update({check: 'FAIL'})
@@ -177,7 +185,9 @@ def check_baseline(baseline_file, scan):
                                 logging.info('ProjectID: ' + str(id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][str(id)][check]))
                                 if expected != 'None' and expected is not None:
                                     result = scan['easyscan-gitlab'][category][str(id)][check]
-                                    if check_baseline_items(expected, result):
+                                    if check_baseline_items(expected, result) == 'ERROR':
+                                        baseline_output_by_check.update({check: 'ERROR'})
+                                    elif check_baseline_items(expected, result):
                                         baseline_output_by_check.update({check: 'PASS'})
                                     else:
                                         baseline_output_by_check.update({check: 'FAIL'})
@@ -190,11 +200,13 @@ def check_baseline_statistics(baseline):
     total_projects = 0 
     total_fails = 0
     total_pass = 0
+    total_errors = 0
     total_checks = 0
     for projects, findings in baseline['easyscan-gitlab']['baseline']['projects'].items():
         total_projects += 1
         total_fails_by_project = 0
         total_pass_by_project = 0
+        total_errors_by_project = 0
         total_checks_by_project = 0
         for finding in findings:
             for check, value in finding.items():
@@ -212,9 +224,12 @@ def check_baseline_statistics(baseline):
                     elif value == 'PASS':
                         total_pass += 1
                         total_pass_by_project += 1
+                    elif value == 'ERROR':
+                        total_errors += 1
+                        total_errors_by_project += 1
         if not totalonly:
-            print ('Project:', name, ' (', projects, ')', '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| Checks: ', total_checks_by_project)
-    print ('Total Projects:', total_projects, '| Total FAILS:', total_fails, '| Total PASS:', total_pass, '| Total Checks: ', total_checks)
+            print ('Project:', name, ' (', projects, ')', '| FAILS:', total_fails_by_project, '| PASS:', total_pass_by_project, '| ERRORS:', total_errors_by_project, '| Checks: ', total_checks_by_project)
+    print ('Total Projects:', total_projects, '| Total FAILS:', total_fails, '| Total PASS:', total_pass, '| Total Errors:', total_errors, '| Total Checks: ', total_checks)
     
 def write_json(content, file_name):
     with open(file_name, 'w', encoding='utf-8') as f:
@@ -281,29 +296,24 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.DEBUG)
     
     baseline_file = args["baseline"]
-
     totalonly = args["totalonly"]
-    if totalonly:
-        print("totalonly:true")
-    else:
-        print("totalonly:false")
 
     banner()
 
     gl = connect(gitlab_url, gitlab_token)
  
     if check == 'project':
-        projects, id_type = get_project_ids(gl, id)
-        print ('ID Type:', id_type)
-        print ('# Projects: ', str(len(projects)))
+        gl_group = GitlabGroupService(gl, id, logging)
         project_output = {}
+        print ('ID Type:', gl_group.group_type)
+        print ('Projects #: ', gl_group.projects_len)
         count = 0
-        for project in projects:
+        for project in gl_group.projects_ids:
             count += 1
-            print(str(count) + "/" + str(len(projects)) + "... ")
-            dict_project = check_project(gl, project)
+            print('Scanning Project:', project, str(count) + "/" + str(gl_group.projects_len) + "... ")
+            gl_project = GitlabProjectService(gl, project, logging)
+            dict_project = check_project(gl_project)
             project_output.update(dict_project)
-
         projects_dict_output = {'projects': project_output}
         inventory = {'easyscan-gitlab': projects_dict_output}
         
