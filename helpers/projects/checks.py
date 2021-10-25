@@ -1,4 +1,3 @@
-from gitlab import exceptions
 from helpers.projects.service import *
 
 
