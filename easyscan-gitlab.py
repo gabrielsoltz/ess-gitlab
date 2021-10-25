@@ -63,6 +63,7 @@ def check_project(gl_project):
     dict.update(check_project_pipeline_images(gl_project))
     dict.update(check_project_codeowners(gl_project))
     dict.update(check_project_shared_runners_enabled(gl_project))
+    dict.update(check_project_runners(gl_project))
     dict.update(check_project_runners_shared(gl_project))
     dict.update(check_project_runners_notshared(gl_project))
     project_dict = {gl_project.project_id: dict}
