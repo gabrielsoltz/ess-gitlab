@@ -232,6 +232,8 @@ projects:
 - Project CODEOWNERS file
 - Project Shared Runners Enabled
 - Project Runners
+- Project Runners Shared
+- Project Runners Not Shared
 
 ### Project Visibility
 
@@ -345,4 +347,18 @@ projects:
 - [Gitlab Documentation](https://docs.gitlab.com/runner/)
 - Baseline Key: `project_runners`
 - Inventory Outputs: List with all runners configured in the project
+- Default Baseline: `True`
+
+### Project Runners Shared
+
+- [Gitlab Documentation](https://docs.gitlab.com/runner/)
+- Baseline Key: `project_runners_shared`
+- Inventory Outputs: List with all runners shared configured in the project
+- Default Baseline: `False`
+
+### Project Runners Not Shared
+
+- [Gitlab Documentation](https://docs.gitlab.com/runner/)
+- Baseline Key: `project_runners_notshared`
+- Inventory Outputs: List with all runners not shared configured in the project
 - Default Baseline: `True`
