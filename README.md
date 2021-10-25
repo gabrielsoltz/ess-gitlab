@@ -230,7 +230,7 @@ projects:
 - Project Pipeline block: `stages`
 - Project Pipeline block: `image`
 - Project CODEOWNERS file
-- Project Shared Runners
+- Project Shared Runners Enabled
 - Project Runners
 
 ### Project Visibility
@@ -333,7 +333,7 @@ projects:
 - Inventory Outputs: `true`, `false`
 - Default Baseline: `True`
 
-### Project Shared Runners
+### Project Shared Runners Enabled
 
 - [Gitlab Documentation](https://docs.gitlab.com/ee/ci/runners/runners_scope.html#shared-runners)
 - Baseline Key: `project_shared_runners_enabled`
