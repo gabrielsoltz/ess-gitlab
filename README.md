@@ -65,7 +65,7 @@ You can define your own baseline based on your needs or use the default one. You
 
 You can define a baseline using the following type of values:
 
-- None: Check disabled
+- None: Check disabled. Useful if you want to keep the baselines check keys as reference. None is the same as not adding that check key to the baseline. 
 - String: Matching string to output (Example: 'internal')
 - Bool: True matchs if output has data or if output True. False matchs if no Data or if output False.
 - List: At least 1 of the values must be in the output (Example: '[docker:latest]'). Empty list ('[]') same as False.
