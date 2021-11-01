@@ -1,17 +1,19 @@
 # EasyScan Gitlab
 
-Easy Scanning for Gitlab Mis-Configurations
+Easy Scanner for Gitlab Security Mis-Configurations
+
+## How to use it
+
+### Mode
 
 This tool can run in 2 different modes (`--mode`):
 
 - Inventory: It will fetch all the information for a specific scope (`check` + `id`).
 - Baseline: It will fetch all the information for a specific scope (`check` + `id`) and compare with the baseline definition for that scope for generating a miss-configuration report
 
-## How to use it
+### ID: Project ID / Group ID / All Projects
 
-### Project ID / Group ID / All Projects
-
-You can define `--id` as a "project id", as a "group id" for getting all project ids under that group or "all" for getting all project ids.
+You can define `--id` as a "project id", as a "group id" for getting all project ids under that group or "all" for getting all project ids. You can use spaces to add more than 1.
 
 ### Gitlab Token
 
@@ -52,7 +54,9 @@ CLI Switch
 - `--jsonprint`: Print JSON to stdout. Use --no-jsonprint, or omit, to not write to stdout.
 - `--baseline`: Defines where is the baseline file. Default: `baselines/default.yml`
 - `--log`: Logger level. Valid Options: ERROR, INFO or DEBUG. Default: ERROR
-- `--totalonly`: Only write total project findings to stdout.
+- `--totalonly`: Only write total project findings to stdout. Default: False
+- `--scan-archived`: Scan also archived projects. Default: False
+- `--max-all`: If using `all` as `--id`, this is the  maximun amount of project to be scanned. Default: 100
 
 ## Baselines
 
