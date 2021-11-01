@@ -2,12 +2,16 @@
 
 Easy Scanner for Gitlab Security Mis-Configurations
 
+## How to use it
+
+### Mode
+
 This tool can run in 2 different modes (`--mode`):
 
 - Inventory: It will fetch all the information for a specific scope (`check` + `id`).
 - Baseline: It will fetch all the information for a specific scope (`check` + `id`) and compare with the baseline definition for that scope for generating a miss-configuration report
 
-## How to use it
+### ID: Project ID / Group ID / All Projects
 
 You can define `--id` as a "project id", as a "group id" for getting all project ids under that group or "all" for getting all project ids. You can use spaces to add more than 1.
 
