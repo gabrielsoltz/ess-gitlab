@@ -37,6 +37,7 @@ def connect(gitlab_url, gitlab_token):
 def banner():
     ascii_banner = pyfiglet.figlet_format("EasyScan Gitlab")
     print (ascii_banner)
+    print ('------------------------')
     print ('Gitlab URL:', gitlab_url)
     print ('Mode:', mode)
     print ('Check:', check)
@@ -44,6 +45,9 @@ def banner():
     print ('Log Level:', log_level)
     print ('Baseline File:', baseline_file)
     print ('Total Only:', totalonly)
+    print ('Scan Archived:', scan_archived)
+    print ('Maximun projects when using all:', max_all)
+    print ('------------------------')
 
 def check_project(gl_project):
     dict = {}
@@ -248,12 +252,14 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--gitlab_token', help="Gitlab Token", required=False)
     parser.add_argument('-m', '--mode', help="Inventory or Baseline", required=True)
     parser.add_argument('-c', '--check', help="Type of check (project)", required=True)
-    parser.add_argument('-i', '--id', help="Gitlab Project/Group ID", required=True)
+    parser.add_argument('-i', '--id', nargs = '*', help="Gitlab Project ID or Group ID or all, use spaces to add more than 1", required=True)
     parser.add_argument('-j', '--jsonfile', action=argparse.BooleanOptionalAction, help="Write JSON Output", required=False)
     parser.add_argument('-p', '--jsonprint', action=argparse.BooleanOptionalAction, help="Show JSON Output", required=False)
     parser.add_argument('-l', '--log', default="ERROR", help="Log Level (Default: ERROR) (Valid Options: ERROR, INFO or DEBUG)" , required=False)
     parser.add_argument('-b', '--baseline', default="baselines/default.yml", help="Baseline File (Default: baselines/default.yml)", required=False)
-    parser.add_argument('-to', '--totalonly', action="store_true", help="Show total only", required=False)
+    parser.add_argument('-to', '--totalonly', action="store_true", help="Show total only (Default: No)", required=False)
+    parser.add_argument('-a', '--scan-archived', action="store_true", help="Include archived projects (Default: No)", required=False)
+    parser.add_argument('-ma', '--max-all', default=100, help="Maximun amount of projects when using all as id (Default: 100)", required=False)
 
     args = vars(parser.parse_args())
     gitlab_url = args["gitlab_url"]
@@ -278,7 +284,7 @@ if __name__ == "__main__":
         logging.error("ERROR: Wrong check. Use: {}".format(",".join(map(str,available_checks))))
         sys.exit(1)
 
-    id = args["id"]
+    ids = args["id"]
 
     jsonfile = True
     if not args["jsonfile"]:
@@ -298,23 +304,42 @@ if __name__ == "__main__":
     
     baseline_file = args["baseline"]
     totalonly = args["totalonly"]
+    scan_archived = args["scan_archived"]    
+    max_all = int(args["max_all"])
 
     banner()
 
     gl = connect(gitlab_url, gitlab_token)
  
     if check == 'project':
-        gl_group = GitlabGroupService(gl, id, logging)
         project_output = {}
-        print ('ID Type:', gl_group.group_type)
-        print ('Projects #: ', gl_group.projects_len)
-        count = 0
-        for project in gl_group.projects_ids:
-            count += 1
-            print('Scanning Project:', project, str(count) + "/" + str(gl_group.projects_len) + "... ")
-            gl_project = GitlabProjectService(gl, project, logging)
-            dict_project = check_project(gl_project)
-            project_output.update(dict_project)
+        project_archived_output = {}
+        count_archived_all = 0
+        for id in ids:
+            gl_group = GitlabGroupService(gl, id, logging, max_all)
+            print ('ID:', gl_group.group_id)
+            print ('ID Type:', gl_group.group_type)
+            print ('Projects #: ', gl_group.projects_len)
+            count = 0
+            count_archived = 0
+            for project in gl_group.projects_ids:
+                count += 1
+                print('Scanning Project:', project, str(count) + "/" + str(gl_group.projects_len) + "... ")
+                gl_project = GitlabProjectService(gl, project, logging)
+                if not gl_project.project_archived:
+                    dict_project = check_project(gl_project)
+                    project_output.update(dict_project)
+                else:
+                    if scan_archived:
+                        dict_project = check_project(gl_project)
+                        project_output.update(dict_project)
+                    else:
+                        dict_project = {gl_project.project_id: ''}
+                    project_archived_output.update(dict_project)
+                    count_archived += 1
+                    count_archived_all += 1
+                    logging.info('Project Archived:', project)
+        print('Archived Projects', count_archived_all)
         projects_dict_output = {'projects': project_output}
         inventory = {'easyscan-gitlab': projects_dict_output}
         
@@ -326,11 +351,11 @@ if __name__ == "__main__":
         else:
             print("not dumped JSON")
         if jsonfile:
-            write_json(baseline, 'baseline-' + id + '.json')
+            write_json(baseline, 'baseline-' + '-'.join(ids) + '.json')
         else:
             print("Not writing JSON files")
         check_baseline_statistics(baseline)
     if mode == 'inventory':
         print(json.dumps(inventory, indent=4, sort_keys=True))
         if jsonfile:
-            write_json(inventory, 'invetory-' + id + '.json')
+            write_json(inventory, 'invetory-' + '-'.join(ids) + '.json')

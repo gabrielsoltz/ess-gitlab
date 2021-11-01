@@ -3,10 +3,10 @@ from gitlab import exceptions
 
 class GitlabGroupService():
     
-    def __init__(self, gl, id, logging):
+    def __init__(self, gl, id, logging, max_all):
         self.logging = logging
         self.group_id = id 
-        get_project_ids = self.get_project_ids(gl, id)
+        get_project_ids = self.get_project_ids(gl, id, max_all)
         if get_project_ids:
             self.projects_ids = get_project_ids[0]
             self.group_type = get_project_ids[1]
@@ -16,7 +16,7 @@ class GitlabGroupService():
             self.group_type = 'ERROR'
             self.projects_len = 0
 
-    def get_project_ids(self, gl, id):
+    def get_project_ids(self, gl, id, max_all):
 
         project_ids_list = []
 
@@ -26,13 +26,11 @@ class GitlabGroupService():
             all_projects = gl.projects.list(as_list=False, lazy=True)
             all_project_len = len(all_projects)
             counter = 0
-            # Hardcoded All Max
-            max_counter = 10
             for project in all_projects:
                 counter += 1
                 print('Projects fetched:', counter, '(total:', all_project_len, ')', end='\r')
                 project_ids_list.append(project.id)
-                if counter == max_counter:
+                if counter >= max_all:
                     break
             return project_ids_list, type
 
@@ -66,10 +64,12 @@ class GitlabProjectService():
         self.logging = logging
         self.project_id = id 
         self.project = gl.projects.get(id)
+        self.project_archived = self.get_project_archived()
         self.project_attributes = self.get_project_attributes()
         self.project_languages = self.get_project_languages()
         self.project_contributors = self.get_project_contributors()
         self.project_labels = self.get_project_labels()
+        self.project_topics = self.get_project_topics()
         self.project_info = self.get_project_info()
         self.project_push_rules = self.get_project_push_rules()
         self.project_protected_branches = self.get_protectedbranches()
@@ -80,6 +80,8 @@ class GitlabProjectService():
         self.project_codeowners = self.get_project_file('CODEOWNERS')
         self.project_runners = self.get_project_runners()
         self.project_shared_runers_enabled = self.get_project_shared_runners_enabled()
+        self.project_plugin_gradle_groovy = self.get_project_file('build.gradle')
+        self.project_plugin_gradle_kotlin = self.get_project_file('build.gradle.kts')
 
     def get_project_info(self):
         project_info = {}
@@ -91,6 +93,8 @@ class GitlabProjectService():
             project_info.update({'project_contributors': self.project_contributors})
         if self.project_labels is not None:
             project_info.update({'project_labels': self.project_labels})
+        if self.project_topics is not None:
+            project_info.update({'project_topics': self.project_topics})
         return {'project_info': project_info}
 
     def get_project_labels(self):
@@ -110,6 +114,32 @@ class GitlabProjectService():
         except exceptions.GitlabListError as e:
             self.logging.error('Error getting project {} labels: {}'.format(self.project_id, e))
         return project_labels_list
+
+    def get_project_topics(self):
+        topics = []
+        try:
+            topics = self.project.tag_list
+        except exceptions.GitlabGetError as e:
+            self.logging.error('Error getting project {} topics: {}'.format(self.project_id, e))
+        except exceptions.GitlabAuthenticationError as e:
+            self.logging.error('Error getting project {} topics: {}'.format(self.project_id, e))
+        except exceptions.GitlabListError as e:
+            self.logging.error('Error getting project {} topics: {}'.format(self.project_id, e))
+        return topics
+
+    def get_project_archived(self):
+        try:
+            archived = self.project.archived
+        except exceptions.GitlabGetError as e:
+            self.logging.error('Error getting project {} archived: {}'.format(self.project_id, e))
+            archived = None
+        except exceptions.GitlabAuthenticationError as e:
+            self.logging.error('Error getting project {} archived: {}'.format(self.project_id, e))
+            archived = None
+        except exceptions.GitlabListError as e:
+            self.logging.error('Error getting project {} archived: {}'.format(self.project_id, e))
+            archived = None
+        return archived
 
     def get_project_attributes(self):
         try:
