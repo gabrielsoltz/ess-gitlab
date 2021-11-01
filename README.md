@@ -72,11 +72,11 @@ You can define a baseline using the following type of values:
 
 ## Scope
 
-You can create a baseline that applies for all projects using project id as `*` or you can specify what you expect from each projects project by defining a baseline with the specific `id` of those projects. 
+You can create a baseline that applies for all projects using project id as `*` or you can specify what you expect from each projects project by defining a baseline with the specific `id` of those projects.
 You can use one baseline to define more than one project.
-If you define a baseline for a specific project and in the same one also values for all projects, the most specific defintion will be apllied. So `*` will not be check in the specific project. 
+If you define a baseline for a specific project and in the same one also values for all projects, the most specific defintion will be apllied. So `*` will not be check in the specific project.
 
-TO DO: Baselines by Group IDs. 
+TO DO: Baselines by Group IDs.
 
 ## Checks: Project
 
@@ -231,7 +231,6 @@ TO DO: Baselines by Group IDs.
 
 ### Check if "Push Rules: Unsigned Commits" and "Push Rules: Comitter Check" are enabled for all projects (`*`)
 
-Baseline:
 ```
 projects:
   - '*':
@@ -241,7 +240,6 @@ projects:
 
 ### Check if "Project Visibility" is `internal` for project `1234` and `public` for project `4321`
 
-Baseline:
 ```
 projects:
   - '1234':
@@ -252,7 +250,6 @@ projects:
 
 ### Check if any project is using the image `docker:latest` in any stage of the pipeline:
 
-Baseline:
 ```
 projects:
   - '*':
@@ -261,7 +258,6 @@ projects:
 
 ### Check if `Deploy Keys`, `Deploy Tokens`, or `Access Tokens` are not being used:
 
-Baseline:
 ```
 projects:
   - '*':
@@ -272,7 +268,6 @@ projects:
 
 ### Check if Pipeline file (`.gitlab-ci.yml`) exists:
 
-Baseline:
 ```
 projects:
   - '*':
@@ -281,7 +276,6 @@ projects:
 
 ### Check if CODEOWNERS file (`CODEOWNERS`) exists:
 
-Baseline:
 ```
 projects:
   - '*':
