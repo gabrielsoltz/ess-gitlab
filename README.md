@@ -2,21 +2,16 @@
 
 Easy Scanner for Gitlab Security Mis-Configurations
 
-## How to use it
-
-### Mode
-
 This tool can run in 2 different modes (`--mode`):
 
 - Inventory: It will fetch all the information for a specific scope (`check` + `id`).
 - Baseline: It will fetch all the information for a specific scope (`check` + `id`) and compare with the baseline definition for that scope for generating a miss-configuration report
 
-### ID: Project ID / Group ID / All Projects
+## How to use it
 
 You can define `--id` as a "project id", as a "group id" for getting all project ids under that group or "all" for getting all project ids. You can use spaces to add more than 1.
 
 ### Gitlab Token
-
 For EasyScan to function properly it requires certain Gitlab scopes. Ensure you have at a minimum maintainer priviliges on the repository and use read_only (read_user, read_api, read_repository, read_registry) scopes for the Gitlab API token.
 
 You can supply the gitlab token in two ways to EasyScan:
@@ -60,163 +55,16 @@ CLI Switch
 
 ## Baselines
 
+You can define your own baseline based on your needs or use the default one. You can choose what checks to perform and the expected value of those checks.
+
+## Possible Values
+
 You can define a baseline using the following type of values:
 
 - None: Check disabled
 - String: Matching string to output (Example: 'internal')
 - Bool: True matchs if output has data or if output True. False matchs if no Data or if output False.
 - List: At least 1 of the values must be in the output (Example: '[docker:latest]'). Empty list ('[]') same as False.
-
-You can define values for all projects using '*' or for a specific project using the project id like '1234'. You can add more than one project id in each baseline.
-
-TO DO: Baselines by Group IDs. 
-
-### Check if "Push Rules: Unsigned Commits" and "Push Rules: Comitter Check" are enabled for all projects (`*`)
-
-Baseline:
-```
-projects:
-  - '*':
-    - project_visibility: None
-    - project_pages_access_level: None
-    - project_security_and_compliance_enabled: None
-    - project_approvals_before_merge: None
-    - project_push_rules_unsigned_commits: True
-    - project_push_rules_comitter_check: True
-    - project_protected_branches: None
-    - project_access_tokens: None
-    - project_deploy_tokens: None
-    - project_deploy_keys: None
-    - project_pipeline: None
-    - project_pipeline_stages: None
-    - project_pipeline_image: None
-    - project_codeowners: None
-```
-
-### Check if "Project Visibility" is `internal` for project `1234` and `public` for project `4321`
-
-Baseline:
-```
-projects:
-  - '1234':
-    - project_visibility: internal
-    - project_pages_access_level: None
-    - project_security_and_compliance_enabled: None
-    - project_approvals_before_merge:  None
-    - project_push_rules_unsigned_commits: None
-    - project_push_rules_comitter_check: None
-    - project_protected_branches: None
-    - project_access_tokens: None
-    - project_deploy_tokens: None
-    - project_deploy_keys: None
-    - project_pipeline: None
-    - project_pipeline_stages: None
-    - project_pipeline_image: None
-    - project_codeowners: None
-  - '4321':
-    - project_visibility: public
-    - project_pages_access_level: None
-    - project_security_and_compliance_enabled: None
-    - project_approvals_before_merge:  None
-    - project_push_rules_unsigned_commits: None
-    - project_push_rules_comitter_check: None
-    - project_protected_branches: None
-    - project_access_tokens: None
-    - project_deploy_tokens: None
-    - project_deploy_keys: None
-    - project_pipeline: None
-    - project_pipeline_stages: None
-    - project_pipeline_image: None
-    - project_codeowners: None
-```
-
-### Check if any project is using the image `docker:latest` in any stage of the pipeline:
-
-Baseline:
-```
-projects:
-  - '*':
-    - project_visibility: None
-    - project_pages_access_level: None
-    - project_security_and_compliance_enabled: None
-    - project_approvals_before_merge:  None
-    - project_push_rules_unsigned_commits: None
-    - project_push_rules_comitter_check: None
-    - project_protected_branches: None
-    - project_access_tokens: None
-    - project_deploy_tokens: None
-    - project_deploy_keys: None
-    - project_pipeline: None
-    - project_pipeline_stages: None
-    - project_pipeline_image: ['docker:latest']
-    - project_codeowners: None
-```
-
-### Check if `project_deploy_keys`, `project_deploy_tokens`, or `project_access_tokens` are not being used:
-
-Baseline:
-```
-projects:
-  - '*':
-    - project_visibility: None
-    - project_pages_access_level: None
-    - project_security_and_compliance_enabled: None
-    - project_approvals_before_merge:  None
-    - project_push_rules_unsigned_commits: None
-    - project_push_rules_comitter_check: None
-    - project_protected_branches: None
-    - project_access_tokens: False
-    - project_deploy_tokens: False
-    - project_deploy_keys: False
-    - project_pipeline: None
-    - project_pipeline_stages: None
-    - project_pipeline_image: None
-    - project_codeowners: None
-```
-
-### Check if Pipeline file (`.gitlab-ci.yml`) exists:
-
-Baseline:
-```
-projects:
-  - '*':
-    - project_visibility: None
-    - project_pages_access_level: None
-    - project_security_and_compliance_enabled: None
-    - project_approvals_before_merge:  None
-    - project_push_rules_unsigned_commits: None
-    - project_push_rules_comitter_check: None
-    - project_protected_branches: None
-    - project_access_tokens: None
-    - project_deploy_tokens: None
-    - project_deploy_keys: None
-    - project_pipeline: True
-    - project_pipeline_stages: None
-    - project_pipeline_image: None
-    - project_codeowners: None
-```
-
-### Check if CODEOWNERS file (`CODEOWNERS`) exists:
-
-Baseline:
-```
-projects:
-  - '*':
-    - project_visibility: None
-    - project_pages_access_level: None
-    - project_security_and_compliance_enabled: None
-    - project_approvals_before_merge:  None
-    - project_push_rules_unsigned_commits: None
-    - project_push_rules_comitter_check: None
-    - project_protected_branches: None
-    - project_access_tokens: None
-    - project_deploy_tokens: None
-    - project_deploy_keys: None
-    - project_pipeline: None
-    - project_pipeline_stages: None
-    - project_pipeline_image: None
-    - project_codeowners: True
-```
 
 ## Checks: Project
 
@@ -234,7 +82,7 @@ projects:
 - Project Pipeline block: `stages`
 - Project Pipeline block: `image`
 - Project CODEOWNERS file
-- Project Shared Runners Enabled
+- Project Shared Runners
 - Project Runners
 - Project Runners Shared
 - Project Runners Not Shared
@@ -366,3 +214,72 @@ projects:
 - Baseline Key: `project_runners_notshared`
 - Inventory Outputs: List with all runners not shared configured in the project
 - Default Baseline: `True`
+
+## Scope
+
+You can create a baseline that applies for all projects using project id as `*` or you can specify what you expect from each projects project by defining a baseline with the specific `id` of those projects. 
+You can use one baseline to define more than one project.
+If you define a baseline for a specific project and in the same one also values for all projects, the most specific defintion will be apllied. So `*` will not be check in the specific project. 
+
+TO DO: Baselines by Group IDs. 
+
+## Examples
+
+### Check if "Push Rules: Unsigned Commits" and "Push Rules: Comitter Check" are enabled for all projects (`*`)
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_push_rules_unsigned_commits: True
+    - project_push_rules_comitter_check: True
+```
+
+### Check if "Project Visibility" is `internal` for project `1234` and `public` for project `4321`
+
+Baseline:
+```
+projects:
+  - '1234':
+    - project_visibility: 'internal'
+  - '4321':
+    - project_visibility: 'public'
+```
+
+### Check if any project is using the image `docker:latest` in any stage of the pipeline:
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_pipeline_image: ['docker:latest']
+```
+
+### Check if `Deploy Keys`, `Deploy Tokens`, or `Access Tokens` are not being used:
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_access_tokens: False
+    - project_deploy_tokens: False
+    - project_deploy_keys: False
+```
+
+### Check if Pipeline file (`.gitlab-ci.yml`) exists:
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_pipeline: True
+```
+
+### Check if CODEOWNERS file (`CODEOWNERS`) exists:
+
+Baseline:
+```
+projects:
+  - '*':
+    - project_codeowners: True
+```
