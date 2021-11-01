@@ -70,6 +70,14 @@ You can define a baseline using the following type of values:
 - Bool: True matchs if output has data or if output True. False matchs if no Data or if output False.
 - List: At least 1 of the values must be in the output (Example: '[docker:latest]'). Empty list ('[]') same as False.
 
+## Scope
+
+You can create a baseline that applies for all projects using project id as `*` or you can specify what you expect from each projects project by defining a baseline with the specific `id` of those projects. 
+You can use one baseline to define more than one project.
+If you define a baseline for a specific project and in the same one also values for all projects, the most specific defintion will be apllied. So `*` will not be check in the specific project. 
+
+TO DO: Baselines by Group IDs. 
+
 ## Checks: Project
 
 - Project Visibility
@@ -219,15 +227,7 @@ You can define a baseline using the following type of values:
 - Inventory Outputs: List with all runners not shared configured in the project
 - Default Baseline: `True`
 
-## Scope
-
-You can create a baseline that applies for all projects using project id as `*` or you can specify what you expect from each projects project by defining a baseline with the specific `id` of those projects. 
-You can use one baseline to define more than one project.
-If you define a baseline for a specific project and in the same one also values for all projects, the most specific defintion will be apllied. So `*` will not be check in the specific project. 
-
-TO DO: Baselines by Group IDs. 
-
-## Examples
+## Baselines Examples
 
 ### Check if "Push Rules: Unsigned Commits" and "Push Rules: Comitter Check" are enabled for all projects (`*`)
 
