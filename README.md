@@ -2,6 +2,13 @@
 
 Easy Scanner for Gitlab Security Mis-Configurations
 
+Most of the tools for Code Analysis focus on scanning the code itself (like SAST tools), but what about the repository containing the code itself? 
+Some vulnerabilities or miss-configuration in the repository could lead to countless attack vectors without having any vulnerability in the code itself.
+
+Checking repository miss-configurations it's a critical part of securing your infrastructure.
+
+Here are some common miss-configurations checks for Gitlab repositories.
+
 ## How to use it
 
 ### Mode
