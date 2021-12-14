@@ -35,7 +35,7 @@ def connect(gitlab_url, gitlab_token):
     #gl.auth()
 
 def banner():
-    ascii_banner = pyfiglet.figlet_format("EasyScan Gitlab")
+    ascii_banner = pyfiglet.figlet_format("ESS-Gitlab")
     print (ascii_banner)
     print ('------------------------')
     print ('Gitlab URL:', gitlab_url)
@@ -146,25 +146,25 @@ def check_baseline(baseline_file, scan):
                                 expected = expected
                             if str(id) == '*':
                                 logging.info('Checking Baseline: ' + str(id))
-                                for scans_id in scan['easyscan-gitlab'][category]:
+                                for scans_id in scan['ess-gitlab'][category]:
                                     try:
-                                        project_name = scan['easyscan-gitlab'][category][scans_id]['project_info']['name_with_namespace']
+                                        project_name = scan['ess-gitlab'][category][scans_id]['project_info']['name_with_namespace']
                                     except: 
-                                        project_name = scan['easyscan-gitlab'][category][scans_id]['project_info']
+                                        project_name = scan['ess-gitlab'][category][scans_id]['project_info']
                                         logging.error('ProjectID: ' + str(scans_id) + ' | project_name error: ' + project_name)
                                     try:
-                                        project_url = scan['easyscan-gitlab'][category][scans_id]['project_info']['web_url']
+                                        project_url = scan['ess-gitlab'][category][scans_id]['project_info']['web_url']
                                     except:
-                                        project_url = scan['easyscan-gitlab'][category][scans_id]['project_info']
+                                        project_url = scan['ess-gitlab'][category][scans_id]['project_info']
                                         logging.error('ProjectID: ' + str(scans_id) + ' | project_url error: ' + project_url)
                                     if not scans_id in baseline_output_by_check_id:
                                         baseline_output_by_check_id[scans_id] = []
                                         baseline_output_by_check_id[scans_id].append({'name': project_name})
                                         baseline_output_by_check_id[scans_id].append({'url': project_url})
                                     baseline_output_by_check = {}
-                                    logging.info('ProjectID: ' + str(scans_id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][scans_id][check]))
+                                    logging.info('ProjectID: ' + str(scans_id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['ess-gitlab'][category][scans_id][check]))
                                     if expected != 'None' and expected is not None:
-                                        result = scan['easyscan-gitlab'][category][scans_id][check]
+                                        result = scan['ess-gitlab'][category][scans_id][check]
                                         if check_baseline_items(expected, result) == 'ERROR':
                                             baseline_output_by_check.update({check: 'ERROR'})
                                         elif check_baseline_items(expected, result):
@@ -172,26 +172,26 @@ def check_baseline(baseline_file, scan):
                                         else:
                                             baseline_output_by_check.update({check: 'FAIL'})
                                         baseline_output_by_check_id[scans_id].append(baseline_output_by_check)
-                            elif str(id) in scan['easyscan-gitlab'][category]:
+                            elif str(id) in scan['ess-gitlab'][category]:
                                 logging.info('Checking Baseline: ' + str(id))
                                 try:
-                                    project_name = scan['easyscan-gitlab'][category][str(id)]['project_info']['name_with_namespace']
+                                    project_name = scan['ess-gitlab'][category][str(id)]['project_info']['name_with_namespace']
                                 except: 
-                                    project_name = scan['easyscan-gitlab'][category][str(id)]['project_info']
+                                    project_name = scan['ess-gitlab'][category][str(id)]['project_info']
                                     logging.error('ProjectID: ' + str(scans_id) + ' | project_name error: ' + project_name)
                                 try:
-                                    project_url = scan['easyscan-gitlab'][category][str(id)]['project_info']['web_url']
+                                    project_url = scan['ess-gitlab'][category][str(id)]['project_info']['web_url']
                                 except:
-                                    project_url = scan['easyscan-gitlab'][category][str(id)]['project_info']
+                                    project_url = scan['ess-gitlab'][category][str(id)]['project_info']
                                     logging.error('ProjectID: ' + str(scans_id) + ' | project_url error: ' + project_url)
                                 if not id in baseline_output_by_check_id:
                                     baseline_output_by_check_id[id] = []
                                     baseline_output_by_check_id[id].append({'name': project_name})
                                     baseline_output_by_check_id[id].append({'url': project_url})
                                 baseline_output_by_check = {}
-                                logging.info('ProjectID: ' + str(id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['easyscan-gitlab'][category][str(id)][check]))
+                                logging.info('ProjectID: ' + str(id) + ' | Check: ' + str(check) + ' | Expected: ' + str(expected) + ' | Type: ' + str(type(expected)) + ' | Result: ' + str(scan['ess-gitlab'][category][str(id)][check]))
                                 if expected != 'None' and expected is not None:
-                                    result = scan['easyscan-gitlab'][category][str(id)][check]
+                                    result = scan['ess-gitlab'][category][str(id)][check]
                                     if check_baseline_items(expected, result) == 'ERROR':
                                         baseline_output_by_check.update({check: 'ERROR'})
                                     elif check_baseline_items(expected, result):
@@ -209,7 +209,7 @@ def check_baseline_statistics(baseline):
     total_pass = 0
     total_errors = 0
     total_checks = 0
-    for projects, findings in baseline['easyscan-gitlab']['baseline']['projects'].items():
+    for projects, findings in baseline['ess-gitlab']['baseline']['projects'].items():
         total_projects += 1
         total_fails_by_project = 0
         total_pass_by_project = 0
@@ -244,8 +244,8 @@ def write_json(content, file_name):
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,description='''
-    EasyScan Gitlab (Easy Scanning for Gitlab Mis-Configurations)
-    https://github.com/gabrielsoltz/easyscan-gitlab
+    ESS-Gitlab (EasyScan Security Gitlab)
+    https://github.com/gabrielsoltz/ess-gitlab
     Author: Gabriel Soltz
     '''
     )
@@ -348,11 +348,11 @@ if __name__ == "__main__":
                     logging.info('Project Archived:', project)
         print('Archived Projects', count_archived_all)
         projects_dict_output = {'projects': project_output}
-        inventory = {'easyscan-gitlab': projects_dict_output}
+        inventory = {'ess-gitlab': projects_dict_output}
         
     if mode == 'baseline':
         baseline_output = {'baseline': check_baseline(baseline_file, inventory)}
-        baseline = {'easyscan-gitlab': baseline_output}
+        baseline = {'ess-gitlab': baseline_output}
         if jsonprint:
             print(json.dumps(baseline, indent=4, sort_keys=True))
         else:

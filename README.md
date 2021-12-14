@@ -1,6 +1,6 @@
-# EasyScan Gitlab
+# ESS-Gitlab (EasyScan Security Gitlab)
 
-Easy Scanner for Gitlab Security Mis-Configurations
+Scanner for Gitlab Security Mis-Configurations
 
 Most of the tools for Code Analysis focus on scanning the code itself (like SAST tools), but what about the repository containing the code itself?
 Some vulnerabilities or miss-configuration in the repository could lead to countless attack vectors without having any vulnerability in the code itself.
@@ -13,12 +13,12 @@ Here are some common miss-configurations checks for Gitlab repositories.
 
 ### Run it using Python venv (Virtual Environment)
 
-1. Change to repostiory dir: `cd easyscan-gitlab`
-2. Create venv for this project: `python3 -m venv venv/easyscan-gitlab`
-3. Source venv you just created `source venv/easyscan-gitlab/bin/activate`
-4. Install easyscan-gitlab requirements in the sourced venv: `pip3 install -r requirements.txt`
+1. Change to repostiory dir: `cd ess-gitlab`
+2. Create venv for this project: `python3 -m venv venv/ess-gitlab`
+3. Source venv you just created `source venv/ess-gitlab/bin/activate`
+4. Install ess-gitlab requirements in the sourced venv: `pip3 install -r requirements.txt`
 5. Gitlab Token: `export GITLAB_TOKEN=<your-token>`
-6. Run: `./easyscan-gitlab.py --gitlab_url <your-gitlab-url> --mode baseline --check project --baseline baselines/log4j.yml --id <your-proj-id>`
+6. Run: `./ess-gitlab.py --gitlab_url <your-gitlab-url> --mode baseline --check project --baseline baselines/log4j.yml --id <your-proj-id>`
 
 (Each time you need to use this program just source venv you created (step 3))
 
@@ -34,9 +34,9 @@ This tool can run in 2 different modes (`--mode`):
 You can define `--id` as a "project id", as a "group id" for getting all project ids under that group or "all" for getting all project ids. You can use spaces to add more than 1.
 
 ### Gitlab Token
-For EasyScan to function properly it requires certain Gitlab scopes. Ensure you have at a minimum maintainer priviliges on the repository and use read_only (read_user, read_api, read_repository, read_registry) scopes for the Gitlab API token.
+For ESS-Gitlab to function properly it requires certain Gitlab scopes. Ensure you have at a minimum maintainer priviliges on the repository and use read_only (read_user, read_api, read_repository, read_registry) scopes for the Gitlab API token.
 
-You can supply the gitlab token in two ways to EasyScan:
+You can supply the gitlab token in two ways to ESS-Gitlab:
 1. Use environment variables called "gitlab_token" (RECOMMENDED)
 2. Use CLI switch --gitlab_token
 
@@ -46,11 +46,11 @@ Environment variable
 
 `EXPORT gitlab_token=<<token_value>>`
 
-`./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
+`./ess-gitlab.py  --gitlab_url https://yourgitlab.com --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
 CLI Switch
 
-`./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
+`./ess-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode inventory --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
 ### Baseline Mode
 
@@ -58,11 +58,11 @@ Environment variable
 
 `EXPORT gitlab_token=<<token_value>>`
 
-`./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
+`./ess-gitlab.py  --gitlab_url https://yourgitlab.com --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
 CLI Switch
 
-`./easyscan-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
+`./ess-gitlab.py  --gitlab_url https://yourgitlab.com --gitlab_token yourgitlabtoken --mode baseline --check project --id <PROJECT_ID>/<GROUP ID>/all`
 
 ### Optional Arguments
 
