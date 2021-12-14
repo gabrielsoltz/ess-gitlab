@@ -70,6 +70,8 @@ def check_project(gl_project):
     dict.update(check_project_runners(gl_project))
     dict.update(check_project_runners_shared(gl_project))
     dict.update(check_project_runners_notshared(gl_project))
+    if scanlog4j:
+        dict.update(check_project_log4j(gl_project))
     project_dict = {gl_project.project_id: dict}
     return project_dict
 
@@ -260,6 +262,7 @@ if __name__ == "__main__":
     parser.add_argument('-to', '--totalonly', action="store_true", help="Show total only (Default: No)", required=False)
     parser.add_argument('-a', '--scan-archived', action="store_true", help="Include archived projects (Default: No)", required=False)
     parser.add_argument('-ma', '--max-all', default=100, help="Maximun amount of projects when using all as id (Default: 100)", required=False)
+    parser.add_argument('--scanlog4j', action=argparse.BooleanOptionalAction, help="Scan Log4J", required=False)
 
     args = vars(parser.parse_args())
     gitlab_url = args["gitlab_url"]
@@ -306,6 +309,10 @@ if __name__ == "__main__":
     totalonly = args["totalonly"]
     scan_archived = args["scan_archived"]    
     max_all = int(args["max_all"])
+
+    scanlog4j = True
+    if not args["scanlog4j"]:
+        scanlog4j = False
 
     banner()
 

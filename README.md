@@ -2,7 +2,7 @@
 
 Easy Scanner for Gitlab Security Mis-Configurations
 
-Most of the tools for Code Analysis focus on scanning the code itself (like SAST tools), but what about the repository containing the code itself? 
+Most of the tools for Code Analysis focus on scanning the code itself (like SAST tools), but what about the repository containing the code itself?
 Some vulnerabilities or miss-configuration in the repository could lead to countless attack vectors without having any vulnerability in the code itself.
 
 Checking repository miss-configurations it's a critical part of securing your infrastructure.
@@ -10,6 +10,17 @@ Checking repository miss-configurations it's a critical part of securing your in
 Here are some common miss-configurations checks for Gitlab repositories.
 
 ## How to use it
+
+### Run it using Python venv (Virtual Environment)
+
+1. Change to repostiory dir: `cd easyscan-gitlab`
+2. Create venv for this project: `python3 -m venv venv/easyscan-gitlab`
+3. Source venv you just created `source venv/easyscan-gitlab/bin/activate`
+4. Install easyscan-gitlab requirements in the sourced venv: `pip3 install -r requirements.txt`
+5. Gitlab Token: `export GITLAB_TOKEN=<your-token>`
+6. Run: `./easyscan-gitlab.py --gitlab_url <your-gitlab-url> --mode baseline --check project --baseline baselines/log4j.yml --id <your-proj-id>`
+
+(Each time you need to use this program just source venv you created (step 3))
 
 ### Mode
 
@@ -234,6 +245,14 @@ TO DO: Baselines by Group IDs.
 - Inventory Outputs: List with all runners not shared configured in the project
 - Default Baseline: `True`
 
+### Finding Strings in the code like libraries. Example for Log4J vulnerability.
+
+Needs to be used with flag `--scanlog4j`
+
+- Baseline Key: `project_log4j`
+- Inventory Outputs: List search output for all `log4j` matchs.
+- Default Baseline: List search output based on `log4j` and that matchs content of key `project_log4j`
+
 ## Baselines Examples
 
 ### Check if "Push Rules: Unsigned Commits" and "Push Rules: Comitter Check" are enabled for all projects (`*`)
@@ -287,4 +306,14 @@ projects:
 projects:
   - '*':
     - project_codeowners: True
+```
+
+### Check for string `org.apache.logging.log4j` in any project. Log4J extra check added.
+
+This check needs to use the flag `--scanlog4j`
+
+```
+projects:
+  - '*':
+    - project_log4j: ['org.apache.logging.log4j']
 ```

@@ -1,5 +1,5 @@
 import yaml
-from gitlab import exceptions
+from gitlab import exceptions, SEARCH_SCOPE_BLOBS
 
 class GitlabGroupService():
     
@@ -80,8 +80,7 @@ class GitlabProjectService():
         self.project_codeowners = self.get_project_file('CODEOWNERS')
         self.project_runners = self.get_project_runners()
         self.project_shared_runers_enabled = self.get_project_shared_runners_enabled()
-        self.project_plugin_gradle_groovy = self.get_project_file('build.gradle')
-        self.project_plugin_gradle_kotlin = self.get_project_file('build.gradle.kts')
+        self.project_search_log4j = self.search_project('log4j')
 
     def get_project_info(self):
         project_info = {}
@@ -320,3 +319,17 @@ class GitlabProjectService():
             self.logging.error('Error getting project {} runners: {}'.format(self.project_id, e))
             runners = None
         return runners
+    
+    def search_project(self, string_to_search):
+        try:
+            project_search = self.project.search(SEARCH_SCOPE_BLOBS, string_to_search)
+        except exceptions.GitlabGetError as e:
+            self.logging.error('Error searching project {}: {}'.format(self.project_id, e))
+            project_search = None
+        except exceptions.GitlabAuthenticationError as e:
+            self.logging.error('Error searching project {}: {}'.format(self.project_id, e))
+            project_search = None
+        except exceptions.GitlabListError as e:
+            self.logging.error('Error searching project {}: {}'.format(self.project_id, e))
+            project_search = None
+        return project_search

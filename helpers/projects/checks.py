@@ -143,3 +143,11 @@ def check_project_runners_notshared(project):
                 project_runners_list.append(project_runners)
         return {'project_runners_notshared': project_runners_list}
     return {'project_runners_notshared': 'ERROR'}
+
+def check_project_log4j(project):
+    if not project.project_search_log4j:
+        return {'project_log4j': False}
+    check_findings = []
+    for findings in project.project_search_log4j:
+        check_findings.append(findings['data'])
+    return {'project_log4j': check_findings}
