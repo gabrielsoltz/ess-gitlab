@@ -3,11 +3,11 @@
 Scanner for Gitlab Security Mis-Configurations
 
 Most of the tools for Code Analysis focus on scanning the code itself (like SAST tools), but what about the repository containing the code?
-Some vulnerabilities or miss-configuration in the repository could lead to countless attack vectors without having any vulnerability in the code itself.
+Some vulnerabilities or mis-configuration in the repository could lead to countless attack vectors without having any vulnerability in the code itself.
 
-Scanning repository miss-configurations it's a critical part of securing your infrastructure.
+Scanning repository mis-configurations it's a critical part of securing your infrastructure.
 
-Here are some common miss-configurations checks for Gitlab repositories.
+Here are some common mis-configurations checks for Gitlab repositories.
 
 ## How to use it
 
@@ -27,7 +27,7 @@ Here are some common miss-configurations checks for Gitlab repositories.
 This tool can run in 2 different modes (`--mode`):
 
 - Inventory: It will fetch all the information for a specific scope (`check` + `id`).
-- Baseline: It will fetch all the information for a specific scope (`check` + `id`) and compare with the baseline definition for that scope for generating a miss-configuration report
+- Baseline: It will fetch all the information for a specific scope (`check` + `id`) and compare with the baseline definition for that scope for generating a mis-configuration report
 
 ### ID: Project ID / Group ID / All Projects
 
