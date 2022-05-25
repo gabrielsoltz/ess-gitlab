@@ -112,7 +112,7 @@ TO DO: Baselines by Group IDs.
 - Project Pipeline block: `stages`
 - Project Pipeline block: `image`
 - Project CODEOWNERS file
-- Project Shared Runners
+- Project Shared Runners Enabled
 - Project Runners
 - Project Runners Shared
 - Project Runners Not Shared
