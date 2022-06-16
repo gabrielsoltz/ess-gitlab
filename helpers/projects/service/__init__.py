@@ -1,5 +1,5 @@
 import yaml
-from gitlab import exceptions, SEARCH_SCOPE_BLOBS
+from gitlab import exceptions, SEARCH_SCOPE_BLOBS, Gitlab
 
 class GitlabGroupService():
     
@@ -61,6 +61,7 @@ class GitlabGroupService():
 class GitlabProjectService():
 
     def __init__(self, gl, id, logging):
+        self.gitlab_connection: Gitlab = gl
         self.logging = logging
         self.project_id = id 
         self.project = gl.projects.get(id)
@@ -76,8 +77,9 @@ class GitlabProjectService():
         self.project_access_tokens = self.get_project_access_tokens()
         self.project_deploy_tokens = self.get_project_deploy_tokens()
         self.project_deploy_keys = self.get_project_deploy_keys()
-        self.project_pipeline = self.get_project_file('.gitlab-ci.yml')
-        self.project_codeowners = self.get_project_file('CODEOWNERS')
+        self.project_file_pipeline = self.get_project_file('.gitlab-ci.yml')
+        self.project_merged_pipeline = self.get_merged_pipeline()
+        self.project_file_codeowners = self.get_project_file('CODEOWNERS')
         self.project_runners = self.get_project_runners()
         self.project_shared_runers_enabled = self.get_project_shared_runners_enabled()
         self.project_search_log4j = self.search_project('log4j')
@@ -270,10 +272,24 @@ class GitlabProjectService():
             project_file = None
         return project_file
 
-    def get_project_pipeline_block(self, pipeline_file, block):
-        if self.project_pipeline:
+    def get_merged_pipeline(self):
+        try:
+            response = self.gitlab_connection.http_get(f"/projects/{self.project_id}/ci/lint")
+            try:
+                pipeline = yaml.safe_load(response["merged_yaml"])
+            except AttributeError as e:
+                errors = response["errors"]
+                self.logging.error('Error getting project {} merged pipeline: {} - {}'.format(self.project_id, e, errors))
+                pipeline = False
+        except exceptions.GitlabError as e:
+            self.logging.error('Error getting project {} merged pipeline: {}'.format(self.project_id, e))
+            pipeline = None
+        return pipeline
+
+    def get_project_merged_pipeline_block(self, pipeline_yaml, block):
+        if self.project_merged_pipeline:
             try: 
-                pipeline_block = yaml.safe_load(pipeline_file)[block]
+                pipeline_block = pipeline_yaml[block]
             except KeyError:
                 pipeline_block = False
             except:
@@ -283,24 +299,17 @@ class GitlabProjectService():
             pipeline_block = []
         return pipeline_block
 
-    def get_project_pipeline_content_of_block(self, pipeline_file, block):
+    def get_project_merged_pipeline_content_of_block(self, pipeline_yaml, block):
         pipeline_block_content = []
-        if self.project_pipeline:
-            try:
-                pipeline_yaml = yaml.safe_load(pipeline_file)
-            except:
-                self.logging.error('Error getting project {} pipeline block content: {}'.format(self.project_id, block))
-                pipeline_block_content = None
-                return pipeline_block_content
-            if pipeline_yaml:
-                for i in pipeline_yaml:
-                    if str(i).strip().lower() == block:
-                        pipeline_block_content.append(pipeline_yaml[i])
-                    if str(pipeline_yaml[i]).strip().lower() == block:
-                        pipeline_block_content.append(pipeline_yaml[i][block])
-                    for j in pipeline_yaml[i]:
-                        if str(j).strip().lower() == block:
-                            pipeline_block_content.append(pipeline_yaml[i][j])
+        if self.project_merged_pipeline:
+            for i in pipeline_yaml:
+                if str(i).strip().lower() == block:
+                    pipeline_block_content.append(pipeline_yaml[i])
+                if str(pipeline_yaml[i]).strip().lower() == block:
+                    pipeline_block_content.append(pipeline_yaml[i][block])
+                for j in pipeline_yaml[i]:
+                    if str(j).strip().lower() == block:
+                        pipeline_block_content.append(pipeline_yaml[i][j])
         return pipeline_block_content
 
     def get_project_shared_runners_enabled(self):

@@ -189,31 +189,38 @@ TO DO: Baselines by Group IDs.
 - Inventory Outputs: List of Project Deploy Keys
 - Default Baseline: `false`
 
-### Project Pipeline file
+### Project file pipeline (`.gitlab-ci.yml`)
 
 - [Gitlab Documentation](https://docs.gitlab.com/ee/ci/pipelines/index.html)
-- Baseline Key: `project_pipeline`
-- Inventory Outputs: `true`, `false`
+- Baseline Key: `project_file_pipeline`
+- Inventory Outputs: `false` or `.gitlab-ci.yml` content
 - Default Baseline: `true`
 
-#### Project Pipeline block: `stages`
+### Project Merged Pipeline
+
+- [Gitlab Documentation](https://docs.gitlab.com/ee/ci/pipelines/index.html)
+- Baseline Key: `project_merged_pipeline`
+- Inventory Outputs: `false` or full pipeline content (including "include" blocks)
+- Default Baseline: `true`
+
+#### Project Merged Pipeline block: `stages`
 
 - [Gitlab Documentation](https://docs.gitlab.com/ee/ci/pipelines/pipeline_architectures.html)
-- Baseline Key: `project_pipeline_stages`
-- Posible Outputs: List with all pipeline Stages
+- Baseline Key: `project_merged_pipeline_stages`
+- Posible Outputs: List of all pipeline Stages (including "include" blocks)
 - Default Baseline: `None`
 
 #### Project Pipeline block: `image`
 
 - [Gitlab Documentation](https://docs.gitlab.com/ee/ci/pipelines/pipeline_architectures.html)
-- Baseline Key: `project_pipeline_image`
-- Posible Outputs: List with all images in any stage of the pipeline
+- Baseline Key: `project_merged_pipeline_image`
+- Posible Outputs: List of all images in any stage of the pipeline (including "include" blocks)
 - Default Baseline: `None`
 
-### Project CODEOWNERS file
+### Project file CODEOWNERS (`CODEOWNERS`)
 
 - [Gitlab Documentation](https://docs.gitlab.com/ee/user/project/code_owners.html)
-- Baseline Key: `project_codeowners`
+- Baseline Key: `project_file_codeowners`
 - Inventory Outputs: `true`, `false`
 - Default Baseline: `True`
 
@@ -228,21 +235,21 @@ TO DO: Baselines by Group IDs.
 
 - [Gitlab Documentation](https://docs.gitlab.com/runner/)
 - Baseline Key: `project_runners`
-- Inventory Outputs: List with all runners configured in the project
+- Inventory Outputs: List of all runners configured in the project
 - Default Baseline: `True`
 
 ### Project Runners Shared
 
 - [Gitlab Documentation](https://docs.gitlab.com/runner/)
 - Baseline Key: `project_runners_shared`
-- Inventory Outputs: List with all runners shared configured in the project
+- Inventory Outputs: List of all runners shared configured in the project
 - Default Baseline: `False`
 
 ### Project Runners Not Shared
 
 - [Gitlab Documentation](https://docs.gitlab.com/runner/)
 - Baseline Key: `project_runners_notshared`
-- Inventory Outputs: List with all runners not shared configured in the project
+- Inventory Outputs: List of all runners not shared configured in the project
 - Default Baseline: `True`
 
 ### Finding Strings in the code like libraries. Example for Log4J vulnerability.
@@ -279,7 +286,7 @@ projects:
 ```
 projects:
   - '*':
-    - project_pipeline_image: ['docker:latest']
+    - project_merged_pipeline_image: ['docker:latest']
 ```
 
 ### Check if `Deploy Keys`, `Deploy Tokens`, or `Access Tokens` are not being used:
@@ -292,12 +299,20 @@ projects:
     - project_deploy_keys: False
 ```
 
-### Check if Pipeline file (`.gitlab-ci.yml`) exists:
+### Check if Pipeline exists by checking file (`.gitlab-ci.yml`):
 
 ```
 projects:
   - '*':
-    - project_pipeline: True
+    - project_file_pipeline: True
+```
+
+### Check if Pipeline exists by using merged pipeline method:
+
+```
+projects:
+  - '*':
+    - project_merged_pipeline: True
 ```
 
 ### Check if CODEOWNERS file (`CODEOWNERS`) exists:
@@ -305,7 +320,7 @@ projects:
 ```
 projects:
   - '*':
-    - project_codeowners: True
+    - project_file_codeowners: True
 ```
 
 ### Check for string `org.apache.logging.log4j` in any project. Log4J extra check added.

@@ -10,10 +10,11 @@ projects:
     - project_access_tokens: False
     - project_deploy_tokens: False
     - project_deploy_keys: False
-    - project_pipeline: True
-    - project_pipeline_stages: None
-    - project_pipeline_image: None
-    - project_codeowners: True
+    - project_file_pipeline: True
+    - project_merged_pipeline: True
+    - project_merged_pipeline_stages: None
+    - project_merged_pipeline_image: None
+    - project_file_codeowners: True
     - project_shared_runners_enabled: False
     - project_runners_shared: False
     - project_runners_notshared: True
