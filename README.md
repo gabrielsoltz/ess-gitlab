@@ -108,10 +108,11 @@ TO DO: Baselines by Group IDs.
 - Project Access Tokens
 - Project Deploy Tokens
 - Project Deploy Keys
-- Project Pipeline: file
-- Project Pipeline block: `stages`
-- Project Pipeline block: `image`
-- Project CODEOWNERS file
+- Project file pipeline (`.gitlab-ci.yml`)
+- Project Merged Pipeline
+- Project Merged Pipeline block: `stages`
+- Project Merged Pipeline block: `image`
+- Project file codeowners (`CODEOWNERS`)
 - Project Shared Runners Enabled
 - Project Runners
 - Project Runners Shared
