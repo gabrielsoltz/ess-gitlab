@@ -346,7 +346,7 @@ if __name__ == "__main__":
                     project_archived_output.update(dict_project)
                     count_archived += 1
                     count_archived_all += 1
-                    logging.info('Project Archived:', project)
+                    print('Project Archived: ', project)
         print('Archived Projects', count_archived_all)
         projects_dict_output = {'projects': project_output}
         inventory = {'ess-gitlab': projects_dict_output}
@@ -355,7 +355,10 @@ if __name__ == "__main__":
         baseline_output = {'baseline': check_baseline(baseline_file, inventory)}
         baseline = {'ess-gitlab': baseline_output}
         if jsonprint:
-            print(json.dumps(baseline, indent=4, sort_keys=True))
+            try:
+                print(json.dumps(baseline, indent=4, sort_keys=True))
+            except TypeError:
+                print(json.dumps(baseline, indent=4))
         else:
             print("not dumped JSON")
         if jsonfile:
@@ -364,6 +367,9 @@ if __name__ == "__main__":
             print("Not writing JSON files")
         check_baseline_statistics(baseline)
     if mode == 'inventory':
-        print(json.dumps(inventory, indent=4, sort_keys=True))
+        try:
+            print(json.dumps(inventory, indent=4, sort_keys=True))
+        except TypeError:
+            print(json.dumps(inventory, indent=4))
         if jsonfile:
-            write_json(inventory, 'invetory-' + '-'.join(ids) + '.json')
+            write_json(inventory, 'inventory-' + '-'.join(ids) + '.json')
