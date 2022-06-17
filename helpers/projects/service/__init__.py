@@ -65,6 +65,7 @@ class GitlabProjectService():
         self.logging = logging
         self.project_id = id 
         self.project = gl.projects.get(id)
+        self.project_ref = self.project.default_branch
         self.project_archived = self.get_project_archived()
         self.project_attributes = self.get_project_attributes()
         self.project_languages = self.get_project_languages()
@@ -253,12 +254,22 @@ class GitlabProjectService():
             self.logging.error('Error getting project {} deploy keys: {}'.format(self.project_id, e))
             deploy_keys = None
         return deploy_keys
-
-    def get_project_file(self, file):
+    
+    def get_project_file(self, file, project=None, ref=None):
+        if not ref: ref = self.project_ref
         try:
-            project_file = self.project.files.raw(file_path=file, ref='master')
+            if project:
+                project_file = project.files.raw(file_path=file, ref=ref)
+            else:
+                project_file = self.project.files.raw(file_path=file, ref=ref)
             return project_file.decode()
         except exceptions.GitlabGetError as e:
+            if '404' in str(e):
+                project_file = False
+            else:
+                self.logging.error('Error getting project {} file: {} {}'.format(self.project_id, file, e))
+                project_file = None
+        except exceptions.GitlabHttpError as e:
             if '404' in str(e):
                 project_file = False
             else:
