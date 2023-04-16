@@ -1,0 +1,17 @@
+# This is an example file
+# Of how to run ess-gitlab in a GitLab CI pipeline.
+# Configure and control the execution of ess-gitlab with the variables.
+
+ess-gitlab-check:
+    image: registry.gitlab.com/<YOUR NAMESPACE>/ess-gitlab
+    stage: build
+    variables:
+        GIT_STRATEGY: clone
+        GITLAB_URL: 'https://gitlab.com'
+        ESS_MODE: 'baseline'
+        ESS_CHECK: 'project'
+        ESS_BASELINE: '/usr/src/app/baselines/default.yml'
+        ESS_GITLAB_ID: '$CI_PROJECT_PATH'
+        ESS_GITLAB_TOKEN: '<DO NOT ADD A TOKEN HERE. ADD IT TO YOUR GITLAB ENVIRONMENT SETTINGS>'
+    script:
+        - /usr/src/app/ess-gitlab.py --gitlab_url $GITLAB_URL --mode $ESS_MODE --check $ESS_CHECK --baseline $ESS_BASELINE --id $ESS_GITLAB_ID --gitlab_token $ESS_GITLAB_TOKEN --jsonprint
